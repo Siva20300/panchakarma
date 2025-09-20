@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { BookingProvider } from './context/BookingContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import NotificationComponent from './components/NotificationComponent';
@@ -35,48 +36,50 @@ function App() {
 
   return (
     <AuthProvider>
-      <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-        <Navbar />
-        <main style={{ flex: 1 }}>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            
-            <Route 
-              path="/doctor-dashboard" 
-              element={
-                <ProtectedRoute allowedRoles={['doctor']}>
-                  <DoctorDashboard />
-                </ProtectedRoute>
-              } 
-            />
-            
-            <Route 
-              path="/therapist-dashboard" 
-              element={
-                <ProtectedRoute allowedRoles={['therapist']}>
-                  <TherapistDashboard />
-                </ProtectedRoute>
-              } 
-            />
-            
-            <Route 
-              path="/patient-dashboard" 
-              element={
-                <ProtectedRoute allowedRoles={['patient']}>
-                  <PatientDashboard />
-                </ProtectedRoute>
-              } 
-            />
-          </Routes>
-        </main>
-        <Footer />
-        <NotificationComponent 
-          notifications={notifications} 
-          onDismiss={dismissNotification} 
-        />
-      </div>
+      <BookingProvider>
+        <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+          <Navbar />
+          <main style={{ flex: 1 }}>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              
+              <Route 
+                path="/doctor-dashboard" 
+                element={
+                  <ProtectedRoute allowedRoles={['doctor']}>
+                    <DoctorDashboard />
+                  </ProtectedRoute>
+                } 
+              />
+              
+              <Route 
+                path="/therapist-dashboard" 
+                element={
+                  <ProtectedRoute allowedRoles={['therapist']}>
+                    <TherapistDashboard />
+                  </ProtectedRoute>
+                } 
+              />
+              
+              <Route 
+                path="/patient-dashboard" 
+                element={
+                  <ProtectedRoute allowedRoles={['patient']}>
+                    <PatientDashboard />
+                  </ProtectedRoute>
+                } 
+              />
+            </Routes>
+          </main>
+          <Footer />
+          <NotificationComponent 
+            notifications={notifications} 
+            onDismiss={dismissNotification} 
+          />
+        </div>
+      </BookingProvider>
     </AuthProvider>
   );
 }
