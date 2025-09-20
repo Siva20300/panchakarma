@@ -1,246 +1,424 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useBooking } from '../context/BookingContext';
 
-const BellIcon = ({ size = 24, color = 'var(--gray-700)' }) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path
-      d="M18 8a6 6 0 10-12 0c0 7-3 8-3 8h18s-3-1-3-8z"
-      stroke={color}
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <path
-      d="M13.73 21a2 2 0 01-3.46 0"
-      stroke={color}
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-);
+const NotificationBell = ({ userType = 'patient' }) => {
+  const { notifications, markNotificationAsRead, bookings, addNotification } = useBooking();
+  const [isOpen, setIsOpen] = useState(false);
+  const [reminders, setReminders] = useState([]);
 
-const Toast = ({ visible, message }) => {
-  if (!visible) return null;
-  return (
-    <div style={{
-      position: 'fixed',
-      right: '1rem',
-      bottom: '1rem',
-      backgroundColor: 'white',
-      border: '1px solid var(--gray-200)',
-      boxShadow: '0 4px 14px rgba(0,0,0,0.12)',
-      borderRadius: '0.5rem',
-      padding: '0.75rem 1rem',
-      zIndex: 1000,
-      minWidth: '260px'
-    }}>
-      <div style={{ fontWeight: 600, marginBottom: 4, color: 'var(--gray-800)' }}>New Assignment</div>
-      <div style={{ fontSize: '0.875rem', color: 'var(--gray-700)' }}>{message}</div>
-    </div>
-  );
-};
-
-const NotificationBell = ({ therapistName, patients, assignmentCandidates = [], onViewProfile, onAccept, onReject }) => {
-  const [open, setOpen] = useState(false);
-  const [notifications, setNotifications] = useState([]);
-  const [unread, setUnread] = useState(0);
-  const [toast, setToast] = useState({ visible: false, message: '' });
-  const containerRef = useRef(null);
-
-  const assignedPatients = useMemo(
-    () => patients.filter(p => p.assignedTherapist === therapistName),
-    [patients, therapistName]
-  );
-
-  // Seed notifications on mount
+  // Add therapy-specific notifications on component mount
   useEffect(() => {
-    const pool = assignmentCandidates.length ? assignmentCandidates : assignedPatients;
-    let seed = pool.slice(0, 2).map(p => ({
-      id: `seed-${p.id}`,
-      patient: p,
-      when: new Date().toISOString(),
-      message: assignmentCandidates.length ? `${p.name} assigned to you for ${p.therapyType}` : `${p.name} has an update for ${p.therapyType}`,
-      read: false,
-      type: assignmentCandidates.length ? 'assignment' : 'update',
-    }));
-    // Ensure at least one immediate notification if possible
-    if (!seed.length && pool.length) {
-      const p = pool[0];
-      seed = [{
-        id: `seed-${p.id}`,
-        patient: p,
-        when: new Date().toISOString(),
-        message: assignmentCandidates.length ? `${p.name} assigned to you for ${p.therapyType}` : `${p.name} has an update for ${p.therapyType}`,
-        read: false,
-        type: assignmentCandidates.length ? 'assignment' : 'update',
-      }];
-    }
-    if (seed.length) {
-      setNotifications(seed);
-      setUnread(seed.length);
-      setToast({ visible: true, message: seed[0].message });
-      setTimeout(() => setToast(t => ({ ...t, visible: false })), 2000);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if (userType === 'patient') {
+      // Add sample therapist messages and therapy reminders
+      const therapyNotifications = [
+        {
+          id: 'therapy_msg_1',
+          type: 'therapist_message',
+          title: 'Message from Dr. Priya Sharma',
+          message: 'Please avoid heavy meals 2 hours before your Shirodhara session tomorrow. Drink plenty of warm water.',
+          timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
+          read: false,
+          recipient: 'patient',
+          therapistName: 'Dr. Priya Sharma'
+        },
+        {
+          id: 'therapy_reminder_1',
+          type: 'therapy_reminder',
+          title: 'Upcoming Panchakarma Session',
+          message: 'Your Abhyanga therapy is scheduled for tomorrow at 10:00 AM. Please arrive 15 minutes early.',
+          timestamp: new Date(Date.now() - 30 * 60 * 1000), // 30 minutes ago
+          read: false,
+          recipient: 'patient',
+          therapyType: 'Abhyanga'
+        },
+        {
+          id: 'diet_update_1',
+          type: 'diet_update',
+          title: 'Diet Plan Updated',
+          message: 'Dr. Rajesh Kumar has updated your food diet plan. Please check the Food Diet tab for new recommendations.',
+          timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000), // 4 hours ago
+          read: false,
+          recipient: 'patient',
+          doctorName: 'Dr. Rajesh Kumar'
+        },
+        {
+          id: 'session_complete_1',
+          type: 'session_completed',
+          title: 'Session Completed',
+          message: 'Your Shirodhara session has been completed. Please provide feedback to help us improve your experience.',
+          timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
+          read: true,
+          recipient: 'patient',
+          therapyType: 'Shirodhara'
+        }
+      ];
 
-  // Simulate frequent notifications as if doctor assigns patients
+      // Add these notifications if they don't exist
+      therapyNotifications.forEach(notif => {
+        if (!notifications.find(n => n.id === notif.id)) {
+          addNotification(notif);
+        }
+      });
+    }
+  }, [userType, notifications, addNotification]);
+
+  // Filter notifications by user type
+  const userNotifications = notifications.filter(notif => notif.recipient === userType);
+  const unreadCount = userNotifications.filter(notif => !notif.read).length;
+
+  // Countdown timer for upcoming appointments
   useEffect(() => {
-    const pool = assignmentCandidates.length ? assignmentCandidates : assignedPatients;
-    if (!pool.length) return;
     const interval = setInterval(() => {
-      const p = pool[Math.floor(Math.random() * pool.length)];
-      const isAssignment = assignmentCandidates.length > 0;
-      const n = {
-        id: `${Date.now()}-${p.id}`,
-        patient: p,
-        when: new Date().toISOString(),
-        message: isAssignment ? `${p.name} assigned to you for ${p.therapyType}` : `${p.name} has a new update for ${p.therapyType}`,
-        read: false,
-        type: isAssignment ? 'assignment' : 'update',
-      };
-      setNotifications(prev => [n, ...prev].slice(0, 20));
-      setUnread(prev => prev + 1);
-      setToast({ visible: true, message: n.message });
-      setTimeout(() => setToast(t => ({ ...t, visible: false })), 2500);
-    }, 5000);
+      const now = new Date();
+      
+      // Get upcoming therapy sessions
+      const upcomingTherapies = [
+        {
+          id: 'upcoming_1',
+          title: 'Abhyanga Therapy',
+          therapist: 'Dr. Priya Sharma',
+          time: new Date(now.getTime() + 14 * 60 * 60 * 1000), // 14 hours from now (tomorrow morning)
+          timeUntil: 14 * 60 * 60 * 1000
+        },
+        {
+          id: 'upcoming_2', 
+          title: 'Shirodhara Session',
+          therapist: 'Dr. Rajesh Kumar',
+          time: new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000), // 3 days from now
+          timeUntil: 3 * 24 * 60 * 60 * 1000
+        }
+      ].filter(therapy => therapy.timeUntil > 0 && therapy.timeUntil < 7 * 24 * 60 * 60 * 1000); // Next 7 days
+
+      setReminders(upcomingTherapies);
+    }, 60000); // Update every minute
 
     return () => clearInterval(interval);
-  }, [assignedPatients, assignmentCandidates]);
+  }, [notifications, userType]);
 
-  // Close dropdown on outside click
-  useEffect(() => {
-    const onClick = (e) => {
-      if (containerRef.current && !containerRef.current.contains(e.target)) {
-        setOpen(false);
-      }
-    };
-    window.addEventListener('click', onClick);
-    return () => window.removeEventListener('click', onClick);
-  }, []);
+  const formatTimeUntil = (milliseconds) => {
+    const days = Math.floor(milliseconds / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((milliseconds % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((milliseconds % (1000 * 60 * 60)) / (1000 * 60));
+    
+    if (days > 0) {
+      return `${days} day${days > 1 ? 's' : ''}`;
+    } else if (hours > 0) {
+      return `${hours}h ${minutes}m`;
+    }
+    return `${minutes}m`;
+  };
 
-  const markAllRead = () => {
-    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
-    setUnread(0);
+  const getNotificationIcon = (type) => {
+    switch (type) {
+      case 'booking_confirmed':
+        return '✅';
+      case 'new_booking':
+        return '📅';
+      case 'reminder':
+        return '⏰';
+      case 'cancellation':
+        return '❌';
+      case 'therapist_message':
+        return '👩‍⚕️';
+      case 'therapy_reminder':
+        return '🧘‍♀️';
+      case 'diet_update':
+        return '🍽️';
+      case 'session_completed':
+        return '✨';
+      case 'payment_reminder':
+        return '💳';
+      case 'progress_update':
+        return '📈';
+      default:
+        return '📢';
+    }
+  };
+
+  const handleNotificationClick = (notification) => {
+    if (!notification.read) {
+      markNotificationAsRead(notification.id);
+    }
   };
 
   return (
-    <div ref={containerRef} style={{ position: 'relative' }}>
-      <button
-        onClick={(e) => { e.stopPropagation(); setOpen(o => !o); if (unread) markAllRead(); }}
-        style={{
-          border: '1px solid var(--gray-300)',
-          background: 'white',
-          borderRadius: '999px',
-          padding: '0.5rem 0.75rem',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.5rem',
-          cursor: 'pointer'
-        }}
-        aria-label="Notifications"
-        title="Notifications"
-      >
-        <BellIcon />
-        <span style={{ fontSize: '0.875rem', color: 'var(--gray-700)', fontWeight: 600 }}>Alerts</span>
-        {unread > 0 && (
-          <span
-            style={{
-              backgroundColor: 'var(--danger-500)',
-              color: 'white',
-              borderRadius: '999px',
-              padding: '0.125rem 0.5rem',
-              fontSize: '0.75rem',
-              fontWeight: 700,
-              lineHeight: 1
-            }}
-          >
-            {unread}
-          </span>
-        )}
-      </button>
-
-      {open && (
-        <div
+    <>
+      {/* Notification Bell */}
+      <div style={{ position: 'relative', display: 'inline-block' }}>
+        <button
+          onClick={() => setIsOpen(!isOpen)}
           style={{
-            position: 'absolute',
-            right: 0,
-            marginTop: '0.5rem',
-            width: '360px',
-            maxHeight: '60vh',
-            overflow: 'auto',
-            background: 'white',
-            border: '1px solid var(--gray-200)',
-            borderRadius: '0.5rem',
-            boxShadow: '0 10px 20px rgba(0,0,0,0.12)',
-            zIndex: 100
+            position: 'relative',
+            padding: '0.75rem',
+            backgroundColor: unreadCount > 0 ? 'var(--primary-50)' : 'transparent',
+            border: unreadCount > 0 ? '2px solid var(--primary-200)' : '2px solid transparent',
+            borderRadius: '50%',
+            cursor: 'pointer',
+            fontSize: '1.5rem',
+            transition: 'all 0.3s ease',
+            boxShadow: unreadCount > 0 ? '0 4px 12px rgba(59, 130, 246, 0.15)' : '0 2px 4px rgba(0, 0, 0, 0.1)',
+            transform: 'scale(1)',
+            background: unreadCount > 0 
+              ? 'linear-gradient(135deg, var(--primary-50), var(--primary-100))' 
+              : 'linear-gradient(135deg, #f8fafc, #e2e8f0)'
+          }}
+          onMouseOver={(e) => {
+            e.target.style.transform = 'scale(1.1)';
+            e.target.style.boxShadow = '0 6px 20px rgba(59, 130, 246, 0.25)';
+            if (unreadCount > 0) {
+              e.target.style.background = 'linear-gradient(135deg, var(--primary-100), var(--primary-200))';
+            } else {
+              e.target.style.background = 'linear-gradient(135deg, #e2e8f0, #cbd5e1)';
+            }
+          }}
+          onMouseOut={(e) => {
+            e.target.style.transform = 'scale(1)';
+            e.target.style.boxShadow = unreadCount > 0 ? '0 4px 12px rgba(59, 130, 246, 0.15)' : '0 2px 4px rgba(0, 0, 0, 0.1)';
+            if (unreadCount > 0) {
+              e.target.style.background = 'linear-gradient(135deg, var(--primary-50), var(--primary-100))';
+            } else {
+              e.target.style.background = 'linear-gradient(135deg, #f8fafc, #e2e8f0)';
+            }
           }}
         >
-          <div style={{ padding: '0.75rem 1rem', borderBottom: '1px solid var(--gray-200)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div style={{ fontWeight: 700, color: 'var(--gray-800)' }}>Notifications</div>
-            <button onClick={markAllRead} className="btn btn-secondary" style={{ padding: '0.25rem 0.5rem' }}>Mark all read</button>
-          </div>
-
-          {notifications.length === 0 ? (
-            <div style={{ padding: '1rem', color: 'var(--gray-600)', fontSize: '0.875rem' }}>No notifications</div>
-          ) : (
-            <div>
-              {notifications.map(n => (
-                <div key={n.id} style={{ padding: '0.75rem 1rem', borderBottom: '1px solid var(--gray-100)', display: 'flex', gap: '0.75rem' }}>
-                  <div style={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: '999px',
-                    background: 'var(--primary-100)',
-                    color: 'var(--primary-700)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontWeight: 700
-                  }}>
-                    {n.patient?.name?.[0] || 'P'}
-                  </div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontWeight: 600, color: 'var(--gray-800)' }}>{n.patient?.name}</div>
-                    <div style={{ fontSize: '0.875rem', color: 'var(--gray-700)', margin: '2px 0 6px' }}>{n.message}</div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--gray-500)' }}>{new Date(n.when).toLocaleString()}</div>
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-                    <button className="btn btn-primary" style={{ padding: '0.25rem 0.5rem' }}
-                      onClick={(e) => { e.stopPropagation(); onViewProfile && onViewProfile(n.patient); }}
-                    >
-                      View Profile
-                    </button>
-                    {n.type === 'assignment' && (
-                      <div style={{ display: 'flex', gap: '0.25rem' }}>
-                        <button className="btn btn-success" style={{ padding: '0.25rem 0.5rem' }}
-                          onClick={(e) => { e.stopPropagation(); onAccept && onAccept(n.patient); setNotifications(prev => prev.map(x => x.id === n.id ? { ...x, read: true } : x)); }}
-                        >
-                          Accept
-                        </button>
-                        <button className="btn btn-danger" style={{ padding: '0.25rem 0.5rem' }}
-                          onClick={(e) => { e.stopPropagation(); onReject && onReject(n.patient); setNotifications(prev => prev.map(x => x.id === n.id ? { ...x, read: true } : x)); }}
-                        >
-                          Reject
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
+          <span style={{
+            display: 'inline-block',
+            filter: unreadCount > 0 ? 'drop-shadow(0 2px 4px rgba(59, 130, 246, 0.3))' : 'none',
+            animation: unreadCount > 0 ? 'bellRing 2s infinite' : 'none'
+          }}>
+            🔔
+          </span>
+          {unreadCount > 0 && (
+            <span style={{
+              position: 'absolute',
+              top: '0.125rem',
+              right: '0.125rem',
+              backgroundColor: '#ef4444',
+              color: 'white',
+              borderRadius: '50%',
+              width: '22px',
+              height: '22px',
+              fontSize: '0.75rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontWeight: 'bold',
+              border: '2px solid white',
+              boxShadow: '0 2px 8px rgba(239, 68, 68, 0.4)',
+              animation: 'pulse 2s infinite'
+            }}>
+              {unreadCount > 9 ? '9+' : unreadCount}
+            </span>
           )}
-        </div>
-      )}
+        </button>
 
-      <Toast visible={toast.visible} message={toast.message} />
-    </div>
+        {/* Add CSS animations */}
+        <style jsx>{`
+          @keyframes bellRing {
+            0%, 50%, 100% { transform: rotate(0deg); }
+            10%, 30% { transform: rotate(-10deg); }
+            20%, 40% { transform: rotate(10deg); }
+          }
+          
+          @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+          }
+        `}</style>
+
+        {/* Notification Dropdown */}
+        {isOpen && (
+          <div style={{
+            position: 'absolute',
+            top: '100%',
+            right: 0,
+            width: '450px',
+            maxHeight: '600px',
+            backgroundColor: 'white',
+            border: '1px solid var(--gray-200)',
+            borderRadius: '0.5rem',
+            boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)',
+            zIndex: 1000,
+            overflowY: 'auto'
+          }}>
+            {/* Header */}
+            <div style={{
+              padding: '1.25rem',
+              borderBottom: '1px solid var(--gray-200)',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}>
+              <h4 style={{
+                margin: 0,
+                fontSize: '1.125rem',
+                fontWeight: '600',
+                color: 'var(--gray-900)'
+              }}>
+                Notifications
+              </h4>
+              <button
+                onClick={() => setIsOpen(false)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  fontSize: '1.25rem',
+                  cursor: 'pointer',
+                  color: 'var(--gray-500)'
+                }}
+              >
+                ×
+              </button>
+            </div>
+
+            {/* Upcoming Therapy Sessions */}
+            {reminders.length > 0 && (
+              <div style={{
+                padding: '1.25rem',
+                backgroundColor: '#f0f9ff',
+                borderBottom: '1px solid var(--gray-200)'
+              }}>
+                <h5 style={{
+                  margin: '0 0 0.75rem 0',
+                  fontSize: '0.875rem',
+                  fontWeight: '600',
+                  color: '#1e40af',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem'
+                }}>
+                  🧘‍♀️ Upcoming Therapy Sessions
+                </h5>
+                {reminders.map(reminder => (
+                  <div key={reminder.id} style={{
+                    backgroundColor: 'white',
+                    padding: '0.75rem',
+                    borderRadius: '0.5rem',
+                    marginBottom: '0.5rem',
+                    border: '1px solid #dbeafe'
+                  }}>
+                    <div style={{
+                      fontSize: '0.875rem',
+                      fontWeight: '600',
+                      color: '#1e40af',
+                      marginBottom: '0.25rem'
+                    }}>
+                      {reminder.title}
+                    </div>
+                    <div style={{
+                      fontSize: '0.75rem',
+                      color: '#64748b',
+                      marginBottom: '0.25rem'
+                    }}>
+                      👩‍⚕️ with {reminder.therapist}
+                    </div>
+                    <div style={{
+                      fontSize: '0.75rem',
+                      color: '#059669',
+                      fontWeight: '500'
+                    }}>
+                      ⏰ in {formatTimeUntil(reminder.timeUntil)}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Notifications List */}
+            <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
+              {userNotifications.length === 0 ? (
+                <div style={{
+                  padding: '1.5rem',
+                  textAlign: 'center',
+                  color: 'var(--gray-500)',
+                  fontSize: '0.875rem'
+                }}>
+                  No notifications yet
+                </div>
+              ) : (
+                userNotifications.map(notification => (
+                  <div
+                    key={notification.id}
+                    onClick={() => handleNotificationClick(notification)}
+                    style={{
+                      padding: '1rem',
+                      borderBottom: '1px solid var(--gray-100)',
+                      cursor: 'pointer',
+                      backgroundColor: notification.read ? 'transparent' : '#f0f9ff',
+                      transition: 'background-color 0.2s ease'
+                    }}
+                    onMouseOver={(e) => {
+                      e.target.style.backgroundColor = 'var(--gray-50)';
+                    }}
+                    onMouseOut={(e) => {
+                      e.target.style.backgroundColor = notification.read ? 'transparent' : '#f0f9ff';
+                    }}
+                  >
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: '0.5rem'
+                    }}>
+                      <span style={{ fontSize: '1.25rem' }}>
+                        {getNotificationIcon(notification.type)}
+                      </span>
+                      <div style={{ flex: 1 }}>
+                        <div style={{
+                          fontSize: '1rem',
+                          fontWeight: notification.read ? '400' : '600',
+                          color: 'var(--gray-900)',
+                          marginBottom: '0.5rem'
+                        }}>
+                          {notification.title}
+                        </div>
+                        <div style={{
+                          fontSize: '0.875rem',
+                          color: 'var(--gray-600)',
+                          marginBottom: '0.5rem',
+                          lineHeight: '1.4'
+                        }}>
+                          {notification.message}
+                        </div>
+                        <div style={{
+                          fontSize: '0.8125rem',
+                          color: 'var(--gray-500)'
+                        }}>
+                          {new Date(notification.timestamp).toLocaleString()}
+                        </div>
+                      </div>
+                      {!notification.read && (
+                        <div style={{
+                          width: '6px',
+                          height: '6px',
+                          backgroundColor: '#3b82f6',
+                          borderRadius: '50%',
+                          marginTop: '0.25rem'
+                        }}></div>
+                      )}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Click outside to close */}
+      {isOpen && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 999
+          }}
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+    </>
   );
 };
 

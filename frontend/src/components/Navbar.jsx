@@ -10,6 +10,11 @@ const Navbar = () => {
   const handleLogout = () => {
     logout();
     navigate('/');
+    setIsMenuOpen(false);
+  };
+
+  const closeMobileMenu = () => {
+    setIsMenuOpen(false);
   };
 
   const getDashboardLink = () => {
@@ -32,13 +37,13 @@ const Navbar = () => {
       borderBottom: '1px solid var(--gray-200)'
     }}>
       <div className="container">
-        <div className="flex justify-between items-center" style={{ padding: '1.25rem 0' }}>
+        <div className="flex justify-between items-center" style={{ padding: '0.75rem 0' }}>
           {/* Logo */}
           <Link to="/" style={{ textDecoration: 'none' }}>
             <div className="flex items-center" style={{ gap: '0.875rem' }}>
               <div style={{
-                width: '45px',
-                height: '45px',
+                width: '36px',
+                height: '36px',
                 background: 'linear-gradient(135deg, var(--primary-600), var(--ayur-600))',
                 borderRadius: '0.75rem',
                 display: 'flex',
@@ -46,14 +51,14 @@ const Navbar = () => {
                 justifyContent: 'center',
                 color: 'white',
                 fontWeight: 'bold',
-                fontSize: '1.375rem',
+                fontSize: '1.125rem',
                 boxShadow: '0 4px 12px rgba(34, 197, 94, 0.25)'
               }}>
                 A
               </div>
               <div>
                 <h1 style={{ 
-                  fontSize: '1.625rem', 
+                  fontSize: '1.375rem', 
                   fontWeight: '700', 
                   color: 'var(--gray-900)',
                   margin: 0,
@@ -62,7 +67,7 @@ const Navbar = () => {
                   AyurSutra
                 </h1>
                 <p style={{ 
-                  fontSize: '0.8rem', 
+                  fontSize: '0.7rem', 
                   color: 'var(--gray-500)',
                   margin: 0,
                   fontWeight: '500'
@@ -295,84 +300,50 @@ const Navbar = () => {
 
           {/* Mobile Menu Button */}
           <button
+            className="mobile-menu-btn"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             style={{
-              display: window.innerWidth <= 768 ? 'block' : 'none',
               padding: '0.5rem',
               border: 'none',
               background: 'none',
-              cursor: 'pointer'
+              cursor: 'pointer',
+              borderRadius: '0.375rem'
             }}
           >
-            <div style={{ width: '24px', height: '3px', backgroundColor: 'var(--gray-600)', margin: '3px 0' }}></div>
-            <div style={{ width: '24px', height: '3px', backgroundColor: 'var(--gray-600)', margin: '3px 0' }}></div>
-            <div style={{ width: '24px', height: '3px', backgroundColor: 'var(--gray-600)', margin: '3px 0' }}></div>
+            <div style={{ width: '24px', height: '2px', backgroundColor: 'var(--gray-700)', margin: '4px 0', borderRadius: '1px', transition: 'all 0.3s ease' }}></div>
+            <div style={{ width: '24px', height: '2px', backgroundColor: 'var(--gray-700)', margin: '4px 0', borderRadius: '1px', transition: 'all 0.3s ease' }}></div>
+            <div style={{ width: '24px', height: '2px', backgroundColor: 'var(--gray-700)', margin: '4px 0', borderRadius: '1px', transition: 'all 0.3s ease' }}></div>
           </button>
         </div>
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div style={{ 
-            padding: '1.5rem 0',
-            borderTop: '1px solid var(--gray-200)',
-            backgroundColor: 'var(--gray-50)',
-            margin: '0 -1rem',
-            paddingLeft: '1rem',
-            paddingRight: '1rem'
-          }}>
+          <div className={`mobile-menu ${isMenuOpen ? 'open' : ''}`}>
             {/* Mobile Navigation Links */}
-            <div style={{ marginBottom: '1.5rem' }}>
+            <div>
               <Link 
                 to="/" 
+                className="nav-link"
+                onClick={closeMobileMenu}
                 style={{ 
-                  display: 'block',
-                  padding: '0.875rem 1.25rem',
                   color: 'var(--gray-700)',
                   textDecoration: 'none',
-                  fontWeight: '600',
-                  borderRadius: '0.75rem',
-                  transition: 'all 0.15s ease',
-                  marginBottom: '0.5rem',
-                  fontSize: '0.95rem'
-                }}
-                onMouseOver={(e) => {
-                  e.target.style.backgroundColor = 'white';
-                  e.target.style.color = 'var(--ayur-600)';
-                  e.target.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.1)';
-                }}
-                onMouseOut={(e) => {
-                  e.target.style.backgroundColor = 'transparent';
-                  e.target.style.color = 'var(--gray-700)';
-                  e.target.style.boxShadow = 'none';
+                  fontWeight: '500'
                 }}
               >
-                🏠 Home
+                Home
               </Link>
               <a 
                 href="#about" 
+                className="nav-link"
+                onClick={closeMobileMenu}
                 style={{ 
-                  display: 'block',
-                  padding: '0.875rem 1.25rem',
                   color: 'var(--gray-700)',
                   textDecoration: 'none',
-                  fontWeight: '600',
-                  borderRadius: '0.75rem',
-                  transition: 'all 0.15s ease',
-                  marginBottom: '0.5rem',
-                  fontSize: '0.95rem'
-                }}
-                onMouseOver={(e) => {
-                  e.target.style.backgroundColor = 'white';
-                  e.target.style.color = 'var(--ayur-600)';
-                  e.target.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.1)';
-                }}
-                onMouseOut={(e) => {
-                  e.target.style.backgroundColor = 'transparent';
-                  e.target.style.color = 'var(--gray-700)';
-                  e.target.style.boxShadow = 'none';
+                  fontWeight: '500'
                 }}
               >
-                👥 About Us
+                About Us
               </a>
               <a 
                 href="#contact" 
@@ -428,99 +399,42 @@ const Navbar = () => {
               </a>
             </div>
 
-            <div style={{ 
-              height: '1px', 
-              backgroundColor: 'var(--gray-300)', 
-              margin: '1rem 0' 
-            }}></div>
-
             {/* Auth Buttons */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            <div className="auth-buttons">
               {isAuthenticated ? (
                 <>
+                  <span className="user-welcome">
+                    Welcome, {user.name}
+                  </span>
                   <Link 
                     to={getDashboardLink()} 
-                    style={{
-                      padding: '0.875rem 1.25rem',
-                      backgroundColor: 'var(--gray-100)',
-                      color: 'var(--gray-700)',
-                      textDecoration: 'none',
-                      borderRadius: '0.75rem',
-                      fontWeight: '500',
-                      fontSize: '0.875rem',
-                      textAlign: 'center',
-                      border: '1px solid var(--gray-300)',
-                      transition: 'all 0.15s ease'
-                    }}
+                    className="btn btn-secondary"
+                    onClick={closeMobileMenu}
                   >
-                    📊 Dashboard
+                    Dashboard
                   </Link>
-                  <div style={{ 
-                    padding: '0.75rem 1.25rem',
-                    backgroundColor: 'white',
-                    borderRadius: '0.75rem',
-                    textAlign: 'center',
-                    border: '1px solid var(--gray-200)'
-                  }}>
-                    <span style={{ 
-                      color: 'var(--gray-600)', 
-                      fontSize: '0.875rem',
-                      fontWeight: '500'
-                    }}>
-                      Welcome, {user.name}
-                    </span>
-                  </div>
                   <button 
                     onClick={handleLogout}
-                    style={{
-                      padding: '0.875rem 1.25rem',
-                      background: 'linear-gradient(135deg, var(--primary-600), var(--ayur-600))',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '0.75rem',
-                      fontWeight: '500',
-                      fontSize: '0.875rem',
-                      cursor: 'pointer',
-                      transition: 'all 0.15s ease'
-                    }}
+                    className="btn btn-primary"
                   >
-                    🚪 Logout
+                    Logout
                   </button>
                 </>
               ) : (
                 <>
                   <Link 
                     to="/login"
-                    style={{
-                      padding: '0.875rem 1.25rem',
-                      backgroundColor: 'var(--gray-100)',
-                      color: 'var(--gray-700)',
-                      textDecoration: 'none',
-                      borderRadius: '0.75rem',
-                      fontWeight: '500',
-                      fontSize: '0.875rem',
-                      textAlign: 'center',
-                      border: '1px solid var(--gray-300)',
-                      transition: 'all 0.15s ease'
-                    }}
+                    className="btn btn-secondary"
+                    onClick={closeMobileMenu}
                   >
-                    🔐 Login
+                    Login
                   </Link>
                   <Link 
                     to="/register"
-                    style={{
-                      padding: '0.875rem 1.25rem',
-                      background: 'linear-gradient(135deg, var(--primary-600), var(--ayur-600))',
-                      color: 'white',
-                      textDecoration: 'none',
-                      borderRadius: '0.75rem',
-                      fontWeight: '500',
-                      fontSize: '0.875rem',
-                      textAlign: 'center',
-                      transition: 'all 0.15s ease'
-                    }}
+                    className="btn btn-primary"
+                    onClick={closeMobileMenu}
                   >
-                    📝 Register
+                    Register
                   </Link>
                 </>
               )}

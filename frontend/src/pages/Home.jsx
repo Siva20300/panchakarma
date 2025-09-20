@@ -10,7 +10,7 @@ const Home = () => {
         color: 'white',
         padding: '4rem 0',
         textAlign: 'center'
-      }}>
+      }} className="hero-section-responsive">
         <div className="container">
           <h1 style={{ fontSize: '3rem', fontWeight: 'bold', marginBottom: '1rem' }}>
             Welcome to AyurSutra
@@ -45,7 +45,7 @@ const Home = () => {
         <div className="container">
           <div className="text-center mb-6">
             <h2 style={{ fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '1rem' }}>
-              Comprehensive Panchakarma Management
+              Panchakarma Management
             </h2>
             <p style={{ fontSize: '1.125rem', color: 'var(--gray-600)' }}>
               Streamline your Ayurvedic practice with our all-in-one management system
