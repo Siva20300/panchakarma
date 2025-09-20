@@ -303,7 +303,7 @@ const NearbyPanchakarmaHospitals = () => {
             borderRadius: '0.5rem',
             border: '1px solid var(--warning-200)'
           }}>
-
+            <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>⚠</div>
             <h4 style={{ 
               fontSize: '1.125rem', 
               fontWeight: 'bold', 
@@ -499,7 +499,7 @@ const NearbyPanchakarmaHospitals = () => {
                 color: 'var(--gray-900)',
                 margin: 0
               }}>
-
+                {userLocation ? `Found ${hospitals.length} Healthcare Facilities` : 'Popular Panchakarma Hospitals'}
               </h4>
               {!userLocation && (
                 <button 
@@ -634,4 +634,34 @@ const NearbyPanchakarmaHospitals = () => {
   );
 };
 
-export default NearbyPanchakarmaHospitals;
+const LocateUs = () => {
+  return (
+    <div style={{ minHeight: '100vh', backgroundColor: 'var(--gray-50)' }}>
+      {/* Header Section */}
+      <section style={{
+        background: 'linear-gradient(135deg, var(--primary-600), var(--ayur-600))',
+        color: 'white',
+        padding: '3rem 0',
+        textAlign: 'center'
+      }}>
+        <div className="container">
+          <h1 style={{ fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '1rem' }}>
+            Find Nearby Panchakarma Centers
+          </h1>
+          <p style={{ fontSize: '1.125rem', opacity: 0.9 }}>
+            Discover authentic Panchakarma hospitals and Ayurvedic centers in your area
+          </p>
+        </div>
+      </section>
+
+      {/* Main Content */}
+      <section style={{ padding: '3rem 0' }}>
+        <div className="container">
+          <NearbyPanchakarmaHospitals />
+        </div>
+      </section>
+    </div>
+  );
+};
+
+export default LocateUs;

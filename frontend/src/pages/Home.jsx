@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import NearbyPanchakarmaHospitals from '../components/NearbyPanchakarmaHospitals';
 
 const Home = () => {
   return (
@@ -16,27 +17,8 @@ const Home = () => {
             Welcome to AyurSutra
           </h1>
           <p style={{ fontSize: '1.25rem', marginBottom: '2rem', opacity: 0.9 }}>
-            Complete Panchakarma Patient Management & Therapy Scheduling Software
+            Panchakarma Patient Management & Therapy Scheduling Software
           </p>
-          <div className="flex justify-center gap-4" style={{ flexWrap: 'wrap' }}>
-            <Link to="/login" className="btn" style={{
-              backgroundColor: 'white',
-              color: 'var(--primary-600)',
-              padding: '1rem 2rem',
-              fontSize: '1.125rem'
-            }}>
-              Get Started
-            </Link>
-            <Link to="#learn-more" className="btn" style={{
-              backgroundColor: 'transparent',
-              color: 'white',
-              border: '2px solid white',
-              padding: '1rem 2rem',
-              fontSize: '1.125rem'
-            }}>
-              Learn More
-            </Link>
-          </div>
         </div>
       </section>
 
@@ -53,19 +35,47 @@ const Home = () => {
           </div>
 
           <div className="grid grid-cols-3" style={{ marginTop: '3rem' }}>
-            <div className="card text-center">
+            <div 
+              className="card text-center"
+              style={{
+                transition: 'all 0.3s ease',
+                cursor: 'pointer'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.08)';
+                const icon = e.currentTarget.querySelector('.icon-circle');
+                if (icon) {
+                  icon.style.backgroundColor = 'var(--primary-200)';
+                  icon.style.transform = 'scale(1.05)';
+                }
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.1)';
+                const icon = e.currentTarget.querySelector('.icon-circle');
+                if (icon) {
+                  icon.style.backgroundColor = 'var(--primary-100)';
+                  icon.style.transform = 'scale(1)';
+                }
+              }}
+            >
               <div className="card-body">
-                <div style={{
-                  width: '60px',
-                  height: '60px',
-                  backgroundColor: 'var(--primary-100)',
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  margin: '0 auto 1rem',
-                  fontSize: '1.5rem'
-                }}>
+                <div 
+                  className="icon-circle"
+                  style={{
+                    width: '60px',
+                    height: '60px',
+                    backgroundColor: 'var(--primary-100)',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    margin: '0 auto 1rem',
+                    fontSize: '1.5rem',
+                    transition: 'all 0.3s ease'
+                  }}
+                >
                   👨‍⚕️
                 </div>
                 <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
@@ -77,19 +87,47 @@ const Home = () => {
               </div>
             </div>
 
-            <div className="card text-center">
+            <div 
+              className="card text-center"
+              style={{
+                transition: 'all 0.3s ease',
+                cursor: 'pointer'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.08)';
+                const icon = e.currentTarget.querySelector('.icon-circle');
+                if (icon) {
+                  icon.style.backgroundColor = 'var(--ayur-200)';
+                  icon.style.transform = 'scale(1.05)';
+                }
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.1)';
+                const icon = e.currentTarget.querySelector('.icon-circle');
+                if (icon) {
+                  icon.style.backgroundColor = 'var(--ayur-100)';
+                  icon.style.transform = 'scale(1)';
+                }
+              }}
+            >
               <div className="card-body">
-                <div style={{
-                  width: '60px',
-                  height: '60px',
-                  backgroundColor: 'var(--ayur-100)',
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  margin: '0 auto 1rem',
-                  fontSize: '1.5rem'
-                }}>
+                <div 
+                  className="icon-circle"
+                  style={{
+                    width: '60px',
+                    height: '60px',
+                    backgroundColor: 'var(--ayur-100)',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    margin: '0 auto 1rem',
+                    fontSize: '1.5rem',
+                    transition: 'all 0.3s ease'
+                  }}
+                >
                   👩‍⚕️
                 </div>
                 <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
@@ -101,19 +139,47 @@ const Home = () => {
               </div>
             </div>
 
-            <div className="card text-center">
+            <div 
+              className="card text-center"
+              style={{
+                transition: 'all 0.3s ease',
+                cursor: 'pointer'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.08)';
+                const icon = e.currentTarget.querySelector('.icon-circle');
+                if (icon) {
+                  icon.style.backgroundColor = '#fde68a';
+                  icon.style.transform = 'scale(1.05)';
+                }
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.1)';
+                const icon = e.currentTarget.querySelector('.icon-circle');
+                if (icon) {
+                  icon.style.backgroundColor = '#fef3c7';
+                  icon.style.transform = 'scale(1)';
+                }
+              }}
+            >
               <div className="card-body">
-                <div style={{
-                  width: '60px',
-                  height: '60px',
-                  backgroundColor: '#fef3c7',
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  margin: '0 auto 1rem',
-                  fontSize: '1.5rem'
-                }}>
+                <div 
+                  className="icon-circle"
+                  style={{
+                    width: '60px',
+                    height: '60px',
+                    backgroundColor: '#fef3c7',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    margin: '0 auto 1rem',
+                    fontSize: '1.5rem',
+                    transition: 'all 0.3s ease'
+                  }}
+                >
                   👤
                 </div>
                 <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
@@ -240,97 +306,18 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Blogs Section */}
-      <section id="blogs" style={{ padding: '4rem 0', backgroundColor: 'var(--gray-50)' }}>
+      {/* Nearby Panchakarma Hospitals Section */}
+      <section style={{ padding: '4rem 0', backgroundColor: 'var(--gray-50)' }}>
         <div className="container">
           <div className="text-center mb-6">
             <h2 style={{ fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '1rem' }}>
-              Latest Blogs & Articles
+              Find Nearby Panchakarma Centers
             </h2>
             <p style={{ fontSize: '1.125rem', color: 'var(--gray-600)' }}>
-              Stay updated with the latest insights on Panchakarma and Ayurvedic treatments
+              Discover authentic Panchakarma hospitals and Ayurvedic centers in your area
             </p>
           </div>
-
-          <div className="grid grid-cols-3">
-            <div className="card">
-              <div style={{
-                height: '200px',
-                background: 'linear-gradient(135deg, var(--ayur-200), var(--ayur-300))',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '3rem'
-              }}>
-                🌿
-              </div>
-              <div className="card-body">
-                <h4 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
-                  Benefits of Panchakarma in Modern Life
-                </h4>
-                <p style={{ color: 'var(--gray-600)', fontSize: '0.875rem', marginBottom: '1rem' }}>
-                  Discover how ancient Panchakarma treatments can help combat modern lifestyle diseases and stress.
-                </p>
-                <div style={{ fontSize: '0.75rem', color: 'var(--gray-500)' }}>
-                  January 15, 2025 • 5 min read
-                </div>
-              </div>
-            </div>
-
-            <div className="card">
-              <div style={{
-                height: '200px',
-                background: 'linear-gradient(135deg, var(--primary-200), var(--primary-300))',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '3rem'
-              }}>
-                💆‍♀️
-              </div>
-              <div className="card-body">
-                <h4 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
-                  Understanding Abhyanga Therapy
-                </h4>
-                <p style={{ color: 'var(--gray-600)', fontSize: '0.875rem', marginBottom: '1rem' }}>
-                  Learn about the therapeutic oil massage that forms the foundation of many Panchakarma treatments.
-                </p>
-                <div style={{ fontSize: '0.75rem', color: 'var(--gray-500)' }}>
-                  January 10, 2025 • 7 min read
-                </div>
-              </div>
-            </div>
-
-            <div className="card">
-              <div style={{
-                height: '200px',
-                background: 'linear-gradient(135deg, #fef3c7, #fde68a)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '3rem'
-              }}>
-                🧘‍♂️
-              </div>
-              <div className="card-body">
-                <h4 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
-                  Preparing for Your First Panchakarma
-                </h4>
-                <p style={{ color: 'var(--gray-600)', fontSize: '0.875rem', marginBottom: '1rem' }}>
-                  Essential guidelines and preparations for patients beginning their Panchakarma journey.
-                </p>
-                <div style={{ fontSize: '0.75rem', color: 'var(--gray-500)' }}>
-                  January 5, 2025 • 6 min read
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div style={{ textAlign: 'center', marginTop: '3rem' }}>
-            <button className="btn btn-primary" style={{ padding: '0.75rem 2rem' }}>
-              View All Articles
-            </button>
-          </div>
+          <NearbyPanchakarmaHospitals />
         </div>
       </section>
 
@@ -490,6 +477,7 @@ const Home = () => {
           </div>
         </div>
       </section>
+
     </div>
   );
 };
