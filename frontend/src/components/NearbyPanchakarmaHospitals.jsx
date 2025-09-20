@@ -303,7 +303,7 @@ const NearbyPanchakarmaHospitals = () => {
             borderRadius: '0.5rem',
             border: '1px solid var(--warning-200)'
           }}>
-            <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>⚠</div>
+
             <h4 style={{ 
               fontSize: '1.125rem', 
               fontWeight: 'bold', 
@@ -499,7 +499,7 @@ const NearbyPanchakarmaHospitals = () => {
                 color: 'var(--gray-900)',
                 margin: 0
               }}>
-                {userLocation ? `Found ${hospitals.length} Healthcare Facilities` : 'Popular Panchakarma Hospitals'}
+
               </h4>
               {!userLocation && (
                 <button 
