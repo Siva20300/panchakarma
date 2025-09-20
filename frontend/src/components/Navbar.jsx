@@ -6,6 +6,8 @@ const Navbar = () => {
   const { user, logout, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isAboutDropdownOpen, setIsAboutDropdownOpen] = useState(false);
+  const [dropdownTimeout, setDropdownTimeout] = useState(null);
 
   const handleLogout = () => {
     logout();
@@ -22,19 +24,74 @@ const Navbar = () => {
     }
   };
 
+  const handleDropdownEnter = () => {
+    if (dropdownTimeout) {
+      clearTimeout(dropdownTimeout);
+      setDropdownTimeout(null);
+    }
+  };
+
+  const handleDropdownLeave = () => {
+    const timeout = setTimeout(() => {
+      setIsAboutDropdownOpen(false);
+    }, 100);
+    setDropdownTimeout(timeout);
+  };
+
+
   return (
-    <nav style={{ 
-      backgroundColor: 'white', 
-      boxShadow: '0 2px 10px rgba(0, 0, 0, 0.08)',
-      position: 'sticky',
-      top: 0,
-      zIndex: 50,
-      borderBottom: '1px solid var(--gray-200)'
-    }}>
+    <>
+      <style>
+        {`
+          .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+          }
+          
+          @media (max-width: 768px) {
+            .desktop-nav {
+              display: none !important;
+            }
+            .mobile-menu-btn {
+              display: block !important;
+            }
+          }
+          @media (min-width: 769px) {
+            .desktop-nav {
+              display: flex !important;
+            }
+            .mobile-menu-btn {
+              display: none !important;
+            }
+          }
+          
+          /* Ensure navigation doesn't wrap */
+          .desktop-nav {
+            overflow: visible;
+            white-space: nowrap;
+          }
+        `}
+      </style>
+      <nav style={{ 
+        backgroundColor: 'white', 
+        boxShadow: '0 2px 10px rgba(0, 0, 0, 0.08)',
+        position: 'sticky',
+        top: 0,
+        zIndex: 50,
+        borderBottom: '1px solid var(--gray-200)'
+      }}>
       <div className="container">
-        <div className="flex justify-between items-center" style={{ padding: '1.25rem 0' }}>
+        <div className="flex items-center" style={{ 
+          padding: '1.25rem 0',
+          justifyContent: 'space-between',
+          width: '100%'
+        }}>
           {/* Logo */}
-          <Link to="/" style={{ textDecoration: 'none' }}>
+          <Link to="/" style={{ 
+            textDecoration: 'none',
+            flexShrink: 0
+          }}>
             <div className="flex items-center" style={{ gap: '0.875rem' }}>
               <div style={{
                 width: '45px',
@@ -74,12 +131,18 @@ const Navbar = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="flex items-center" style={{ 
-            display: window.innerWidth > 768 ? 'flex' : 'none',
-            gap: '3rem'
+          <div className="flex items-center desktop-nav" style={{ 
+            display: 'flex',
+            gap: '1.5rem',
+            alignItems: 'center',
+            flexWrap: 'nowrap'
           }}>
             {/* Navigation Links */}
-            <div className="flex items-center" style={{ gap: '2rem' }}>
+            <div className="flex items-center" style={{ 
+              gap: '1.5rem',
+              alignItems: 'center',
+              flexWrap: 'nowrap'
+            }}>
               <Link 
                 to="/" 
                 style={{ 
@@ -89,7 +152,8 @@ const Navbar = () => {
                   fontSize: '0.9rem',
                   transition: 'all 0.2s ease',
                   padding: '0.5rem 0',
-                  position: 'relative'
+                  position: 'relative',
+                  whiteSpace: 'nowrap'
                 }}
                 onMouseOver={(e) => {
                   e.target.style.color = 'var(--ayur-600)';
@@ -102,30 +166,158 @@ const Navbar = () => {
               >
                 Home
               </Link>
-              <a 
-                href="#about" 
-                style={{ 
-                  color: 'var(--gray-700)', 
-                  textDecoration: 'none', 
-                  fontWeight: '600',
-                  fontSize: '0.9rem',
-                  transition: 'all 0.2s ease',
-                  padding: '0.5rem 0',
-                  position: 'relative'
-                }}
-                onMouseOver={(e) => {
-                  e.target.style.color = 'var(--ayur-600)';
-                  e.target.style.transform = 'translateY(-1px)';
-                }}
-                onMouseOut={(e) => {
-                  e.target.style.color = 'var(--gray-700)';
-                  e.target.style.transform = 'translateY(0)';
-                }}
+              <div 
+                style={{ position: 'relative' }}
+                onMouseEnter={() => setIsAboutDropdownOpen(true)}
+                onMouseLeave={handleDropdownLeave}
               >
-                About Us
-              </a>
-              <a 
-                href="#contact" 
+                <a 
+                  href="#about" 
+                  style={{ 
+                    color: 'var(--gray-700)', 
+                    textDecoration: 'none', 
+                    fontWeight: '600',
+                    fontSize: '0.9rem',
+                    transition: 'all 0.2s ease',
+                    padding: '0.5rem 0',
+                    position: 'relative',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.25rem',
+                    whiteSpace: 'nowrap'
+                  }}
+                  onMouseOver={(e) => {
+                    e.target.style.color = 'var(--ayur-600)';
+                    e.target.style.transform = 'translateY(-1px)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.target.style.color = 'var(--gray-700)';
+                    e.target.style.transform = 'translateY(0)';
+                  }}
+                >
+                  About Us
+                </a>
+                
+                {/* Dropdown Menu */}
+                {isAboutDropdownOpen && (
+                  <div 
+                    style={{
+                      position: 'absolute',
+                      top: '100%',
+                      left: '0',
+                      backgroundColor: 'white',
+                      borderRadius: '0.75rem',
+                      boxShadow: '0 10px 25px rgba(0, 0, 0, 0.15)',
+                      border: '1px solid var(--gray-200)',
+                      minWidth: '220px',
+                      zIndex: 100,
+                      padding: '0.75rem 0',
+                      marginTop: '0.25rem'
+                    }}
+                    onMouseEnter={handleDropdownEnter}
+                    onMouseLeave={handleDropdownLeave}
+                  >
+                    <Link 
+                      to="/overview"
+                      style={{
+                        display: 'block',
+                        padding: '0.75rem 1.25rem',
+                        color: 'var(--gray-700)',
+                        textDecoration: 'none',
+                        fontSize: '0.875rem',
+                        fontWeight: '500',
+                        transition: 'all 0.15s ease'
+                      }}
+                      onMouseOver={(e) => {
+                        e.target.style.backgroundColor = 'var(--ayur-50)';
+                        e.target.style.color = 'var(--ayur-700)';
+                        e.target.style.paddingLeft = '1.5rem';
+                      }}
+                      onMouseOut={(e) => {
+                        e.target.style.backgroundColor = 'transparent';
+                        e.target.style.color = 'var(--gray-700)';
+                        e.target.style.paddingLeft = '1.25rem';
+                      }}
+                    >
+                      📋 Overview
+                    </Link>
+                    <Link 
+                      to="/mission-vision"
+                      style={{
+                        display: 'block',
+                        padding: '0.75rem 1.25rem',
+                        color: 'var(--gray-700)',
+                        textDecoration: 'none',
+                        fontSize: '0.875rem',
+                        fontWeight: '500',
+                        transition: 'all 0.15s ease'
+                      }}
+                      onMouseOver={(e) => {
+                        e.target.style.backgroundColor = 'var(--ayur-50)';
+                        e.target.style.color = 'var(--ayur-700)';
+                        e.target.style.paddingLeft = '1.5rem';
+                      }}
+                      onMouseOut={(e) => {
+                        e.target.style.backgroundColor = 'transparent';
+                        e.target.style.color = 'var(--gray-700)';
+                        e.target.style.paddingLeft = '1.25rem';
+                      }}
+                    >
+                      🎯 Mission and Vision
+                    </Link>
+                    <Link 
+                      to="/therapies"
+                      style={{
+                        display: 'block',
+                        padding: '0.75rem 1.25rem',
+                        color: 'var(--gray-700)',
+                        textDecoration: 'none',
+                        fontSize: '0.875rem',
+                        fontWeight: '500',
+                        transition: 'all 0.15s ease'
+                      }}
+                      onMouseOver={(e) => {
+                        e.target.style.backgroundColor = 'var(--ayur-50)';
+                        e.target.style.color = 'var(--ayur-700)';
+                        e.target.style.paddingLeft = '1.5rem';
+                      }}
+                      onMouseOut={(e) => {
+                        e.target.style.backgroundColor = 'transparent';
+                        e.target.style.color = 'var(--gray-700)';
+                        e.target.style.paddingLeft = '1.25rem';
+                      }}
+                    >
+                      💆‍♀️ Therapies
+                    </Link>
+                    <Link 
+                      to="/what-is-panchakarma"
+                      style={{
+                        display: 'block',
+                        padding: '0.75rem 1.25rem',
+                        color: 'var(--gray-700)',
+                        textDecoration: 'none',
+                        fontSize: '0.875rem',
+                        fontWeight: '500',
+                        transition: 'all 0.15s ease'
+                      }}
+                      onMouseOver={(e) => {
+                        e.target.style.backgroundColor = 'var(--ayur-50)';
+                        e.target.style.color = 'var(--ayur-700)';
+                        e.target.style.paddingLeft = '1.5rem';
+                      }}
+                      onMouseOut={(e) => {
+                        e.target.style.backgroundColor = 'transparent';
+                        e.target.style.color = 'var(--gray-700)';
+                        e.target.style.paddingLeft = '1.25rem';
+                      }}
+                    >
+                      🧘‍♂️ What is Panchakarma
+                    </Link>
+                  </div>
+                )}
+              </div>
+              <Link 
+                to="/contact-us" 
                 style={{ 
                   color: 'var(--gray-700)', 
                   textDecoration: 'none', 
@@ -133,7 +325,8 @@ const Navbar = () => {
                   fontSize: '0.9rem',
                   transition: 'all 0.2s ease',
                   padding: '0.5rem 0',
-                  position: 'relative'
+                  position: 'relative',
+                  whiteSpace: 'nowrap'
                 }}
                 onMouseOver={(e) => {
                   e.target.style.color = 'var(--ayur-600)';
@@ -145,9 +338,9 @@ const Navbar = () => {
                 }}
               >
                 Contact Us
-              </a>
-              <a 
-                href="#blogs" 
+              </Link>
+              <Link 
+                to="/blogs" 
                 style={{ 
                   color: 'var(--gray-700)', 
                   textDecoration: 'none', 
@@ -155,7 +348,8 @@ const Navbar = () => {
                   fontSize: '0.9rem',
                   transition: 'all 0.2s ease',
                   padding: '0.5rem 0',
-                  position: 'relative'
+                  position: 'relative',
+                  whiteSpace: 'nowrap'
                 }}
                 onMouseOver={(e) => {
                   e.target.style.color = 'var(--ayur-600)';
@@ -167,7 +361,55 @@ const Navbar = () => {
                 }}
               >
                 Blogs
-              </a>
+              </Link>
+              {/* Patient Stories Link */}
+              <Link 
+                to="/patient-stories"
+                style={{ 
+                  color: 'var(--gray-700)', 
+                  textDecoration: 'none', 
+                  fontWeight: '600',
+                  fontSize: '0.9rem',
+                  transition: 'all 0.2s ease',
+                  padding: '0.5rem 0',
+                  position: 'relative',
+                  whiteSpace: 'nowrap'
+                }}
+                onMouseOver={(e) => {
+                  e.target.style.color = 'var(--ayur-600)';
+                  e.target.style.transform = 'translateY(-1px)';
+                }}
+                onMouseOut={(e) => {
+                  e.target.style.color = 'var(--gray-700)';
+                  e.target.style.transform = 'translateY(0)';
+                }}
+              >
+                Patient Stories
+              </Link>
+              {/* Locate Us Link */}
+              <Link 
+                to="/locate-us"
+                style={{ 
+                  color: 'var(--gray-700)', 
+                  textDecoration: 'none', 
+                  fontWeight: '600',
+                  fontSize: '0.9rem',
+                  transition: 'all 0.2s ease',
+                  padding: '0.5rem 0',
+                  position: 'relative',
+                  whiteSpace: 'nowrap'
+                }}
+                onMouseOver={(e) => {
+                  e.target.style.color = 'var(--ayur-600)';
+                  e.target.style.transform = 'translateY(-1px)';
+                }}
+                onMouseOut={(e) => {
+                  e.target.style.color = 'var(--gray-700)';
+                  e.target.style.transform = 'translateY(0)';
+                }}
+              >
+                Locate Us
+              </Link>
             </div>
 
             {/* Auth Buttons */}
@@ -178,21 +420,20 @@ const Navbar = () => {
                     to={getDashboardLink()} 
                     style={{
                       padding: '0.625rem 1.25rem',
-                      backgroundColor: 'var(--gray-100)',
-                      color: 'var(--gray-700)',
+                      background: 'linear-gradient(135deg, var(--primary-600), var(--ayur-600))',
+                      color: 'white',
                       textDecoration: 'none',
                       borderRadius: '0.5rem',
                       fontWeight: '500',
                       fontSize: '0.875rem',
-                      transition: 'all 0.15s ease',
-                      border: '1px solid var(--gray-300)'
+                      transition: 'all 0.15s ease'
                     }}
                     onMouseOver={(e) => {
-                      e.target.style.backgroundColor = 'var(--gray-200)';
+                      e.target.style.opacity = '0.9';
                       e.target.style.transform = 'translateY(-1px)';
                     }}
                     onMouseOut={(e) => {
-                      e.target.style.backgroundColor = 'var(--gray-100)';
+                      e.target.style.opacity = '1';
                       e.target.style.transform = 'translateY(0)';
                     }}
                   >
@@ -244,21 +485,20 @@ const Navbar = () => {
                     to="/login"
                     style={{
                       padding: '0.625rem 1.25rem',
-                      backgroundColor: 'var(--gray-100)',
-                      color: 'var(--gray-700)',
+                      background: 'linear-gradient(135deg, var(--primary-600), var(--ayur-600))',
+                      color: 'white',
                       textDecoration: 'none',
                       borderRadius: '0.5rem',
                       fontWeight: '500',
                       fontSize: '0.875rem',
-                      transition: 'all 0.15s ease',
-                      border: '1px solid var(--gray-300)'
+                      transition: 'all 0.15s ease'
                     }}
                     onMouseOver={(e) => {
-                      e.target.style.backgroundColor = 'var(--gray-200)';
+                      e.target.style.opacity = '0.9';
                       e.target.style.transform = 'translateY(-1px)';
                     }}
                     onMouseOut={(e) => {
-                      e.target.style.backgroundColor = 'var(--gray-100)';
+                      e.target.style.opacity = '1';
                       e.target.style.transform = 'translateY(0)';
                     }}
                   >
@@ -297,12 +537,13 @@ const Navbar = () => {
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             style={{
-              display: window.innerWidth <= 768 ? 'block' : 'none',
+              display: 'none',
               padding: '0.5rem',
               border: 'none',
               background: 'none',
               cursor: 'pointer'
             }}
+            className="mobile-menu-btn"
           >
             <div style={{ width: '24px', height: '3px', backgroundColor: 'var(--gray-600)', margin: '3px 0' }}></div>
             <div style={{ width: '24px', height: '3px', backgroundColor: 'var(--gray-600)', margin: '3px 0' }}></div>
@@ -348,8 +589,8 @@ const Navbar = () => {
               >
                 🏠 Home
               </Link>
-              <a 
-                href="#about" 
+              <Link 
+                to="/locate-us" 
                 style={{ 
                   display: 'block',
                   padding: '0.875rem 1.25rem',
@@ -372,51 +613,24 @@ const Navbar = () => {
                   e.target.style.boxShadow = 'none';
                 }}
               >
-                👥 About Us
-              </a>
-              <a 
-                href="#contact" 
+                📍 Locate Us
+              </Link>
+              <Link 
+                to="/blogs" 
                 style={{ 
                   display: 'block',
                   padding: '0.875rem 1.25rem',
                   color: 'var(--gray-700)',
                   textDecoration: 'none',
-                  fontWeight: '600',
-                  borderRadius: '0.75rem',
-                  transition: 'all 0.15s ease',
-                  marginBottom: '0.5rem',
-                  fontSize: '0.95rem'
+                  fontSize: '0.9rem',
+                  fontWeight: '500',
+                  borderRadius: '0.5rem',
+                  transition: 'all 0.2s ease'
                 }}
                 onMouseOver={(e) => {
-                  e.target.style.backgroundColor = 'white';
-                  e.target.style.color = 'var(--ayur-600)';
-                  e.target.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.1)';
-                }}
-                onMouseOut={(e) => {
-                  e.target.style.backgroundColor = 'transparent';
-                  e.target.style.color = 'var(--gray-700)';
-                  e.target.style.boxShadow = 'none';
-                }}
-              >
-                📞 Contact Us
-              </a>
-              <a 
-                href="#blogs" 
-                style={{ 
-                  display: 'block',
-                  padding: '0.875rem 1.25rem',
-                  color: 'var(--gray-700)',
-                  textDecoration: 'none',
-                  fontWeight: '600',
-                  borderRadius: '0.75rem',
-                  transition: 'all 0.15s ease',
-                  marginBottom: '0.5rem',
-                  fontSize: '0.95rem'
-                }}
-                onMouseOver={(e) => {
-                  e.target.style.backgroundColor = 'white';
-                  e.target.style.color = 'var(--ayur-600)';
-                  e.target.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.1)';
+                  e.target.style.backgroundColor = 'var(--ayur-50)';
+                  e.target.style.color = 'var(--ayur-700)';
+                  e.target.style.boxShadow = '0 2px 4px rgba(34, 197, 94, 0.1)';
                 }}
                 onMouseOut={(e) => {
                   e.target.style.backgroundColor = 'transparent';
@@ -425,7 +639,104 @@ const Navbar = () => {
                 }}
               >
                 📝 Blogs
-              </a>
+              </Link>
+              <Link 
+                to="/patient-stories" 
+                style={{ 
+                  display: 'block',
+                  padding: '0.875rem 1.25rem',
+                  color: 'var(--gray-700)',
+                  textDecoration: 'none',
+                  fontWeight: '600',
+                  borderRadius: '0.75rem',
+                  transition: 'all 0.15s ease',
+                  marginBottom: '0.5rem',
+                  fontSize: '0.95rem'
+                }}
+                onMouseOver={(e) => {
+                  e.target.style.backgroundColor = 'white';
+                  e.target.style.color = 'var(--ayur-600)';
+                  e.target.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.1)';
+                }}
+                onMouseOut={(e) => {
+                  e.target.style.backgroundColor = 'transparent';
+                  e.target.style.color = 'var(--gray-700)';
+                  e.target.style.boxShadow = 'none';
+                }}
+              >
+                💬 Patient Stories
+              </Link>
+              <Link 
+                to="/locate-us" 
+                style={{ 
+                  display: 'block',
+                  padding: '0.875rem 1.25rem',
+                  color: 'var(--gray-700)',
+                  textDecoration: 'none',
+                  fontSize: '0.9rem',
+                  fontWeight: '500',
+                  borderRadius: '0.5rem',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseOver={(e) => {
+                  e.target.style.backgroundColor = 'var(--ayur-50)';
+                  e.target.style.color = 'var(--ayur-700)';
+                  e.target.style.boxShadow = '0 2px 4px rgba(34, 197, 94, 0.1)';
+                }}
+                onMouseOut={(e) => {
+                  e.target.style.backgroundColor = 'transparent';
+                  e.target.style.color = 'var(--gray-700)';
+                  e.target.style.boxShadow = 'none';
+                }}
+              >
+                📍 Locate Us
+              </Link>
+              <Link 
+                to="/therapy-centers" 
+                style={{ 
+                  display: 'block',
+                  padding: '0.875rem 1.25rem 0.875rem 2rem',
+                  color: 'var(--gray-600)',
+                  textDecoration: 'none',
+                  fontSize: '0.85rem',
+                  fontWeight: '500',
+                  borderRadius: '0.5rem',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseOver={(e) => {
+                  e.target.style.backgroundColor = 'var(--ayur-50)';
+                  e.target.style.color = 'var(--ayur-700)';
+                }}
+                onMouseOut={(e) => {
+                  e.target.style.backgroundColor = 'transparent';
+                  e.target.style.color = 'var(--gray-600)';
+                }}
+              >
+                🏥 Therapy Centers
+              </Link>
+              <Link 
+                to="/hospitals" 
+                style={{ 
+                  display: 'block',
+                  padding: '0.875rem 1.25rem 0.875rem 2rem',
+                  color: 'var(--gray-600)',
+                  textDecoration: 'none',
+                  fontSize: '0.85rem',
+                  fontWeight: '500',
+                  borderRadius: '0.5rem',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseOver={(e) => {
+                  e.target.style.backgroundColor = 'var(--ayur-50)';
+                  e.target.style.color = 'var(--ayur-700)';
+                }}
+                onMouseOut={(e) => {
+                  e.target.style.backgroundColor = 'transparent';
+                  e.target.style.color = 'var(--gray-600)';
+                }}
+              >
+                🏨 Hospitals
+              </Link>
             </div>
 
             <div style={{ 
@@ -442,15 +753,22 @@ const Navbar = () => {
                     to={getDashboardLink()} 
                     style={{
                       padding: '0.875rem 1.25rem',
-                      backgroundColor: 'var(--gray-100)',
-                      color: 'var(--gray-700)',
+                      background: 'linear-gradient(135deg, var(--primary-600), var(--ayur-600))',
+                      color: 'white',
                       textDecoration: 'none',
                       borderRadius: '0.75rem',
                       fontWeight: '500',
                       fontSize: '0.875rem',
                       textAlign: 'center',
-                      border: '1px solid var(--gray-300)',
                       transition: 'all 0.15s ease'
+                    }}
+                    onMouseOver={(e) => {
+                      e.target.style.opacity = '0.9';
+                      e.target.style.transform = 'translateY(-1px)';
+                    }}
+                    onMouseOut={(e) => {
+                      e.target.style.opacity = '1';
+                      e.target.style.transform = 'translateY(0)';
                     }}
                   >
                     📊 Dashboard
@@ -493,15 +811,22 @@ const Navbar = () => {
                     to="/login"
                     style={{
                       padding: '0.875rem 1.25rem',
-                      backgroundColor: 'var(--gray-100)',
-                      color: 'var(--gray-700)',
+                      background: 'linear-gradient(135deg, var(--primary-600), var(--ayur-600))',
+                      color: 'white',
                       textDecoration: 'none',
                       borderRadius: '0.75rem',
                       fontWeight: '500',
                       fontSize: '0.875rem',
                       textAlign: 'center',
-                      border: '1px solid var(--gray-300)',
                       transition: 'all 0.15s ease'
+                    }}
+                    onMouseOver={(e) => {
+                      e.target.style.opacity = '0.9';
+                      e.target.style.transform = 'translateY(-1px)';
+                    }}
+                    onMouseOut={(e) => {
+                      e.target.style.opacity = '1';
+                      e.target.style.transform = 'translateY(0)';
                     }}
                   >
                     🔐 Login
@@ -529,6 +854,7 @@ const Navbar = () => {
         )}
       </div>
     </nav>
+    </>
   );
 };
 

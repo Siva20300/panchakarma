@@ -93,6 +93,26 @@ const Login = () => {
             <p style={{ fontSize: '1.125rem', opacity: 0.85, margin: 0 }}>
               Sign in to your AyurSutra account
             </p>
+            
+            {/* Back to Home Link */}
+            <div style={{ marginTop: '1.5rem' }}>
+              <Link 
+                to="/"
+                style={{
+                  color: 'rgba(255, 255, 255, 0.8)',
+                  textDecoration: 'none',
+                  fontSize: '0.875rem',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  transition: 'color 0.15s ease'
+                }}
+                onMouseOver={(e) => e.target.style.color = 'white'}
+                onMouseOut={(e) => e.target.style.color = 'rgba(255, 255, 255, 0.8)'}
+              >
+                Back to Home
+              </Link>
+            </div>
           </div>
           
           <div style={{ padding: '3rem 2.5rem' }}>
@@ -245,7 +265,7 @@ const Login = () => {
                   fontSize: '0.875rem'
                 }}
               >
-                Create your account here →
+                Create your account here
               </Link>
             </div>
           </div>
