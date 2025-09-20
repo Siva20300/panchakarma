@@ -1383,7 +1383,8 @@ const PatientDashboard = () => {
                     }}>
                       <p style={{ fontSize: "0.75rem", color: "var(--warning-700)", margin: 0 }}>
                         <strong>⚠️ Doctor's Instructions:</strong> {patientFoodDiet.notes}
-                      </p>
+                      </p>  
+                      
                     </div>
                   )}
 
