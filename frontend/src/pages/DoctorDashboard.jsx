@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { dummyPatients, dummyTherapists, therapyTypes, therapistNotifications } from '../data/dummyData';
+import { useAuth } from '../context/AuthContext';
+import { dummyPatients, dummyTherapists, therapyTypes, therapistNotifications } from '../data/dummyData.jsx';
 
 const DoctorDashboard = () => {
+  const { user } = useAuth();
   const location = useLocation();
   const [activeTab, setActiveTab] = useState('overview');
   const [patients, setPatients] = useState(dummyPatients);
@@ -279,7 +281,7 @@ const DoctorDashboard = () => {
             </button>
           </div>
 
-          <span style={{ color: '#6b7280', fontSize: '0.875rem' }}>Dr. Smith</span>
+          <span style={{ color: '#6b7280', fontSize: '0.875rem' }}>{user?.name || 'Doctor'}</span>
           <div style={{
             width: '32px',
             height: '32px',
@@ -530,6 +532,24 @@ const DoctorDashboard = () => {
 
       {/* Main Content */}
       <div style={{ padding: '1.5rem', position: 'relative', zIndex: 1 }}>
+
+        {/* Welcome Header */}
+        <div style={{ marginBottom: '2rem' }}>
+          <h1 style={{ 
+            fontSize: '2.25rem', 
+            fontWeight: 'bold', 
+            color: '#1f2937', 
+            marginBottom: '0.5rem' 
+          }}>
+            Welcome back, {user?.name || 'Doctor'} 👨‍⚕️
+          </h1>
+          <p style={{ 
+            color: '#6b7280', 
+            fontSize: '1.1rem' 
+          }}>
+            Here's an overview of your practice and patient management
+          </p>
+        </div>
 
         {/* Compact Stats Cards */}
         <div style={{ 

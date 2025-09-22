@@ -1,16 +1,21 @@
 import React, { useMemo, useState } from 'react';
-import { dummyPatients, dummyFeedback, dummyUsers, dummyBookings } from '../data/dummyData';
+import { useAuth } from '../context/AuthContext';
+import { dummyPatients, dummyFeedback, dummyUsers, dummyBookings, dummyFoodDiets } from '../data/dummyData.jsx';
 import CircularProgress from '../components/CircularProgress';
 import SessionProgressBar from '../components/SessionProgressBar';
 import NotificationBell from '../components/NotificationBell';
 import PatientProfileModal from '../components/PatientProfileModal';
 
 const TherapistDashboard = () => {
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState('assigned');
-  const [patients, setPatients] = useState(dummyPatients.filter(p => p.assignedTherapist === 'Priya Sharma'));
+  const therapistName = user?.name || 'Therapist';
+  const [patients, setPatients] = useState(dummyPatients.filter(p => p.assignedTherapist === therapistName));
   const [feedback] = useState(dummyFeedback);
   const [profileModal, setProfileModal] = useState({ open: false, patient: null });
-  const therapistName = 'Priya Sharma';
+  const [showDietForm, setShowDietForm] = useState(false);
+  const [selectedPatientForDiet, setSelectedPatientForDiet] = useState(null);
+  const [foodDiets, setFoodDiets] = useState(dummyFoodDiets);
   const assigningDoctor = dummyUsers.find(u => u.role === 'doctor') || { name: 'Assigning Doctor' };
   const assignmentCandidates = dummyPatients.filter(p => !p.assignedTherapist);
 
@@ -70,8 +75,8 @@ const TherapistDashboard = () => {
         {/* Header */}
         <div className="mb-6" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem' }}>
           <div>
-            <h1 style={{ fontSize: '2.25rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
-              Therapist Dashboard
+            <h1 style={{ fontSize: '2.25rem', fontWeight: 'bold', marginBottom: '0.5rem', color: 'var(--primary-600)' }}>
+              Welcome, {therapistName} 🧘‍♀️
             </h1>
             <p style={{ color: 'var(--gray-600)' }}>
               Manage your assigned patients and update therapy sessions
@@ -686,5 +691,4 @@ const TherapistDashboard = () => {
 };
 
 export default TherapistDashboard;
-
 

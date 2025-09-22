@@ -2,7 +2,8 @@
 
 
 import React, { useState } from "react";
-import { dummyPatients, therapyTypes, dummyFoodDiets } from "../data/dummyData";
+import { useAuth } from '../context/AuthContext';
+import { dummyPatients, therapyTypes, dummyFoodDiets } from "../data/dummyData.jsx";
 import { useBooking } from '../context/BookingContext';
 import SlotGrid from '../components/SlotGrid';
 import BookingModal from '../components/BookingModal';
@@ -32,6 +33,7 @@ const progressData = [
 ];
 
 const PatientDashboard = () => {
+  const { user } = useAuth();
   const { getUpcomingBookings, getAvailableSlots } = useBooking();
   const [activeTab, setActiveTab] = useState("profile");
   const [showBookingModal, setShowBookingModal] = useState(false);
@@ -41,12 +43,19 @@ const PatientDashboard = () => {
   const [feedbackText, setFeedbackText] = useState("");
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
   const { bookings, addBooking } = useBooking();
-  const [patientData, setPatientData] = useState(dummyPatients[0]); // Assuming current user is first patient
+  
+  // Use actual user data or fallback to dummy data
+  const [patientData, setPatientData] = useState({
+    ...dummyPatients[0],
+    name: user?.name || dummyPatients[0].name,
+    age: user?.age || dummyPatients[0].age,
+    email: user?.email || dummyPatients[0].email
+  });
   const [patientFoodDiet, setPatientFoodDiet] = useState(dummyFoodDiets.find(diet => diet.patientId === dummyPatients[0].id));
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({
-    name: dummyPatients[0].name,
-    age: dummyPatients[0].age,
+    name: user?.name || dummyPatients[0].name,
+    age: user?.age || dummyPatients[0].age,
     phone: dummyPatients[0].phone,
     email: dummyPatients[0].email,
   });
@@ -1353,7 +1362,7 @@ const PatientDashboard = () => {
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                       <div>
                         <p style={{ fontSize: "0.875rem", fontWeight: "600", marginBottom: "0.25rem", color: "var(--primary-700)" }}>
-                          👨‍⚕️ Assigned by: Dr. {patientFoodDiet.doctorName}
+                          👨‍⚕️ Assigned by: {patientFoodDiet.createdBy}
                         </p>
                         <p style={{ fontSize: "0.75rem", color: "var(--gray-600)", margin: 0 }}>
                           Last updated: {new Date(patientFoodDiet.lastUpdated).toLocaleDateString()}
@@ -1373,7 +1382,7 @@ const PatientDashboard = () => {
                   </div>
 
                   {/* Doctor's Notes */}
-                  {patientFoodDiet.notes && (
+                  {patientFoodDiet.doctorNotes && (
                     <div style={{
                       backgroundColor: "var(--warning-50)",
                       padding: "0.75rem",
@@ -1382,7 +1391,7 @@ const PatientDashboard = () => {
                       marginBottom: "1.5rem"
                     }}>
                       <p style={{ fontSize: "0.75rem", color: "var(--warning-700)", margin: 0 }}>
-                        <strong>⚠️ Doctor's Instructions:</strong> {patientFoodDiet.notes}
+                        <strong>⚠️ Doctor's Instructions:</strong> {patientFoodDiet.doctorNotes}
                       </p>  
                       
                     </div>
@@ -1417,7 +1426,7 @@ const PatientDashboard = () => {
                         </h5>
                         <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
                           {/* Show only morning and lunch foods as summary */}
-                          {patientFoodDiet.dietPlan.morning?.foods.slice(0, 2).map((food, index) => (
+                          {patientFoodDiet.mealPlan.morning?.recommended.slice(0, 2).map((food, index) => (
                             <li key={index} style={{ 
                               padding: "0.125rem 0", 
                               fontSize: "0.75rem",
@@ -1426,7 +1435,7 @@ const PatientDashboard = () => {
                               • {food}
                             </li>
                           ))}
-                          {patientFoodDiet.dietPlan.lunch?.foods.slice(0, 2).map((food, index) => (
+                          {patientFoodDiet.mealPlan.lunch?.recommended.slice(0, 2).map((food, index) => (
                             <li key={index} style={{ 
                               padding: "0.125rem 0", 
                               fontSize: "0.75rem",
@@ -1516,7 +1525,7 @@ const PatientDashboard = () => {
                   }}>
                     <p style={{ fontSize: "0.75rem", color: "var(--warning-700)", margin: 0 }}>
                       <strong>⚠️ Important:</strong> This diet plan is specifically designed for your treatment. 
-                      Contact Dr. {patientFoodDiet.doctorName} for any modifications or questions.
+                      Contact {patientFoodDiet.createdBy} for any modifications or questions.
                     </p>
                   </div>
                 </div>
