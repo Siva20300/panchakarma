@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { dummyUsers } from '../data/dummyData';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -10,6 +9,7 @@ const Login = () => {
   });
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -25,30 +25,30 @@ const Login = () => {
     setError('');
     setIsLoading(true);
 
-    // Simulate loading delay for better UX
-    await new Promise(resolve => setTimeout(resolve, 1500));
-
-    // Find user in dummy data
-    const user = dummyUsers.find(u => u.email === formData.email);
-    
-    if (user) {
-      login(user);
-      // Redirect based on role
-      switch (user.role) {
-        case 'doctor':
-          navigate('/doctor-dashboard');
-          break;
-        case 'therapist':
-          navigate('/therapist-dashboard');
-          break;
-        case 'patient':
-          navigate('/patient-dashboard');
-          break;
-        default:
-          navigate('/');
+    try {
+      const result = await login(formData);
+      
+      if (result.success) {
+        // Redirect based on role
+        switch (result.user.role) {
+          case 'doctor':
+            navigate('/doctor-dashboard');
+            break;
+          case 'therapist':
+            navigate('/therapist-dashboard');
+            break;
+          case 'patient':
+            navigate('/patient-dashboard');
+            break;
+          default:
+            navigate('/');
+        }
+      } else {
+        setError(result.error);
       }
-    } else {
-      setError('Invalid email or password');
+    } catch (error) {
+      console.error('Login error:', error);
+      setError('An unexpected error occurred. Please try again.');
     }
     
     setIsLoading(false);
@@ -251,49 +251,79 @@ const Login = () => {
               </div>
 
               {/* Password Field */}
-              <div style={{ marginBottom: '2rem' }}>
-                <label style={{
-                  display: 'block',
-                  fontSize: '0.95rem',
+              <div style={{ marginBottom: '1.5rem' }}>
+                <label style={{ 
+                  display: 'block', 
+                  marginBottom: '0.5rem', 
+                  color: '#2e7d32', 
                   fontWeight: '600',
-                  color: '#2e7d32',
-                  marginBottom: '0.75rem',
-                  textAlign: 'left'
+                  fontSize: '0.95rem'
                 }}>
                   Password
                 </label>
-                <input
-                  type="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  required
-                  placeholder="Enter your password"
-                  style={{
-                    width: '100%',
-                    padding: '1rem 1.25rem',
-                    fontSize: '1rem',
-                    border: '2px solid #c8e6c9',
-                    borderRadius: '16px',
-                    backgroundColor: '#f1f8e9',
-                    transition: 'all 0.3s ease',
-                    outline: 'none',
-                    color: '#2e7d32',
-                    boxShadow: '0 2px 8px rgba(144, 238, 144, 0.1)'
-                  }}
-                  onFocus={(e) => {
-                    e.target.style.borderColor = '#66bb6a';
-                    e.target.style.backgroundColor = '#ffffff';
-                    e.target.style.boxShadow = '0 8px 25px rgba(144, 238, 144, 0.2)';
-                    e.target.style.transform = 'translateY(-2px)';
-                  }}
-                  onBlur={(e) => {
-                    e.target.style.borderColor = '#c8e6c9';
-                    e.target.style.backgroundColor = '#f1f8e9';
-                    e.target.style.boxShadow = '0 2px 8px rgba(144, 238, 144, 0.1)';
-                    e.target.style.transform = 'translateY(0)';
-                  }}
-                />
+                <div style={{ position: 'relative' }}>
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                    placeholder="Enter your password"
+                    style={{
+                      width: '100%',
+                      padding: '1rem 3rem 1rem 1.25rem',
+                      border: '2px solid rgba(144, 238, 144, 0.3)',
+                      borderRadius: '12px',
+                      fontSize: '1rem',
+                      backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                      transition: 'all 0.2s ease',
+                      outline: 'none'
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.borderColor = '#66bb6a';
+                      e.target.style.backgroundColor = 'white';
+                      e.target.style.boxShadow = '0 0 0 3px rgba(144, 238, 144, 0.1)';
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.borderColor = 'rgba(144, 238, 144, 0.3)';
+                      e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
+                      e.target.style.boxShadow = 'none';
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    style={{
+                      position: 'absolute',
+                      right: '1rem',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontSize: '1.2rem',
+                      color: '#6b7280',
+                      padding: '0.25rem',
+                      borderRadius: '4px',
+                      transition: 'color 0.2s ease'
+                    }}
+                    onMouseOver={(e) => e.target.style.color = '#2e7d32'}
+                    onMouseOut={(e) => e.target.style.color = '#6b7280'}
+                    title={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? (
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                        <line x1="1" y1="1" x2="23" y2="23"/>
+                      </svg>
+                    ) : (
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                      </svg>
+                    )}
+                  </button>
+                </div>
               </div>
 
               {/* Submit Button */}
@@ -393,6 +423,25 @@ const Login = () => {
               >
                 Create your account here
               </Link>
+            </div>
+
+            {/* Demo Accounts Info */}
+            <div style={{ 
+              marginTop: '1rem', 
+              padding: '1rem',
+              backgroundColor: 'rgba(144, 238, 144, 0.05)',
+              borderRadius: '12px',
+              border: '1px solid rgba(144, 238, 144, 0.15)'
+            }}>
+              <p style={{ 
+                color: '#2e7d32', 
+                fontSize: '0.8rem', 
+                textAlign: 'center',
+                margin: 0,
+                fontStyle: 'italic'
+              }}>
+                💡 Demo accounts available: doctor@ayursutra.com, therapist@ayursutra.com, patient@ayursutra.com (any password)
+              </p>
             </div>
           </div>
         </div>

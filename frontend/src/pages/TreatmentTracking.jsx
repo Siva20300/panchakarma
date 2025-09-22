@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { detailedPatientData } from '../data/dummyData';
+import { detailedPatientData } from '../data/dummyData.jsx';
 
 const TreatmentTracking = () => {
   const { patientId } = useParams();
