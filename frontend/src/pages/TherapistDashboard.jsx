@@ -71,14 +71,200 @@ const TherapistDashboard = () => {
 
   return (
     <div style={{ padding: '2rem 0' }}>
+      <style>
+        {`
+          /* ===== THERAPIST DASHBOARD RESPONSIVE STYLES ===== */
+          
+          /* DESKTOP (Default) */
+          .therapist-dashboard-container {
+            padding: 2rem 0;
+          }
+          
+          .therapist-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+          }
+          
+          .therapist-title {
+            font-size: 2.25rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: var(--primary-600);
+          }
+          
+          .therapist-subtitle {
+            color: var(--gray-600);
+          }
+          
+          .therapist-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+          }
+          
+          .therapist-tabs {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.25rem;
+          }
+          
+          .therapist-card {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+          }
+          
+          /* TABLET (768px - 1024px) */
+          @media screen and (min-width: 768px) and (max-width: 1024px) {
+            .therapist-dashboard-container {
+              padding: 1.5rem 0;
+            }
+            
+            .therapist-header {
+              flex-direction: column;
+              align-items: flex-start;
+              gap: 1rem;
+            }
+            
+            .therapist-title {
+              font-size: 2rem;
+            }
+            
+            .therapist-stats-grid {
+              grid-template-columns: repeat(2, 1fr);
+              gap: 1rem;
+            }
+            
+            .therapist-tabs {
+              justify-content: center;
+              gap: 0.25rem;
+            }
+            
+            .tab-button-responsive {
+              padding: 0.75rem 1rem !important;
+              font-size: 0.875rem !important;
+            }
+          }
+          
+          /* MOBILE (0px - 767px) */
+          @media screen and (max-width: 767px) {
+            .therapist-dashboard-container {
+              padding: 1rem 0 !important;
+            }
+            
+            .container {
+              padding: 0 1rem !important;
+            }
+            
+            .therapist-header {
+              flex-direction: column !important;
+              align-items: center !important;
+              text-align: center !important;
+              gap: 1rem !important;
+              margin-bottom: 1.5rem !important;
+            }
+            
+            .therapist-title {
+              font-size: 1.75rem !important;
+              line-height: 1.2 !important;
+            }
+            
+            .therapist-subtitle {
+              font-size: 0.9rem !important;
+              text-align: center !important;
+            }
+            
+            .therapist-stats-grid {
+              grid-template-columns: 1fr !important;
+              gap: 1rem !important;
+              margin-bottom: 1.5rem !important;
+            }
+            
+            .therapist-tabs {
+              flex-direction: column !important;
+              gap: 0.5rem !important;
+              margin-bottom: 1.5rem !important;
+            }
+            
+            .tab-button-responsive {
+              width: 100% !important;
+              padding: 1rem !important;
+              font-size: 1rem !important;
+              text-align: center !important;
+            }
+            
+            .therapist-card {
+              padding: 1rem !important;
+              border-radius: 0.5rem !important;
+              margin-bottom: 1rem !important;
+            }
+            
+            .therapist-actions {
+              flex-direction: column !important;
+              gap: 0.5rem !important;
+            }
+            
+            .therapist-actions .btn {
+              width: 100% !important;
+              padding: 1rem !important;
+              font-size: 1rem !important;
+            }
+            
+            .patient-table {
+              font-size: 0.75rem !important;
+              overflow-x: auto !important;
+            }
+            
+            .patient-table th,
+            .patient-table td {
+              padding: 0.5rem 0.25rem !important;
+              white-space: nowrap !important;
+            }
+          }
+          
+          /* SMALL MOBILE (320px - 480px) */
+          @media screen and (max-width: 480px) {
+            .therapist-dashboard-container {
+              padding: 0.5rem 0 !important;
+            }
+            
+            .container {
+              padding: 0 0.75rem !important;
+            }
+            
+            .therapist-title {
+              font-size: 1.5rem !important;
+            }
+            
+            .therapist-subtitle {
+              font-size: 0.85rem !important;
+            }
+            
+            .therapist-card {
+              padding: 0.75rem !important;
+            }
+            
+            .tab-button-responsive {
+              padding: 0.875rem !important;
+            }
+          }
+        `}
+      </style>
+      
       <div className="container">
         {/* Header */}
-        <div className="mb-6" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem' }}>
+        <div className="therapist-header mb-6" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem' }}>
           <div>
-            <h1 style={{ fontSize: '2.25rem', fontWeight: 'bold', marginBottom: '0.5rem', color: 'var(--primary-600)' }}>
+            <h1 className="therapist-title" style={{ fontSize: '2.25rem', fontWeight: 'bold', marginBottom: '0.5rem', color: 'var(--primary-600)' }}>
               Welcome, {therapistName} 🧘‍♀️
             </h1>
-            <p style={{ color: 'var(--gray-600)' }}>
+            <p className="therapist-subtitle" style={{ color: 'var(--gray-600)' }}>
               Manage your assigned patients and update therapy sessions
             </p>
           </div>
@@ -109,7 +295,7 @@ const TherapistDashboard = () => {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-3 mb-6">
+        <div className="therapist-stats-grid grid grid-cols-3 mb-6">
           <div className="card">
             <div className="card-body text-center">
               <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--primary-600)' }}>
@@ -143,7 +329,7 @@ const TherapistDashboard = () => {
         </div>
 
         {/* Tabs - pill styled */}
-        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1.25rem' }}>
+        <div className="therapist-tabs" style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1.25rem' }}>
           <TabButton id="assigned" label="Assigned Patients" active={activeTab === 'assigned'} onClick={setActiveTab} icon="👥" />
           <TabButton id="sessions" label="Session Updates" active={activeTab === 'sessions'} onClick={setActiveTab} icon="🗓️" />
           <TabButton id="reports" label="My Reports" active={activeTab === 'reports'} onClick={setActiveTab} icon="📄" />

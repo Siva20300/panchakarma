@@ -157,10 +157,203 @@ const DoctorDashboard = () => {
             90% { transform: translateX(-1px); }
             100% { transform: translateX(0px); }
           }
+          
+          /* ===== DOCTOR DASHBOARD RESPONSIVE STYLES ===== */
+          
+          /* DESKTOP (Default) */
+          .doctor-dashboard-container {
+            min-height: 100vh;
+            background-color: #f8fafc;
+          }
+          
+          .doctor-top-nav {
+            background-color: white;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            position: relative;
+            z-index: 999;
+          }
+          
+          .doctor-sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            height: 100vh;
+            background: white;
+            border-right: 1px solid #e5e7eb;
+            z-index: 998;
+            transform: translateX(0);
+            transition: transform 0.3s ease;
+          }
+          
+          .doctor-main-content {
+            margin-left: 250px;
+            padding: 2rem;
+            min-height: calc(100vh - 80px);
+          }
+          
+          .doctor-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+          }
+          
+          .doctor-content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+          }
+          
+          /* TABLET (768px - 1024px) */
+          @media screen and (min-width: 768px) and (max-width: 1024px) {
+            .doctor-top-nav {
+              padding: 1rem 1.5rem;
+            }
+            
+            .doctor-sidebar {
+              width: 220px;
+            }
+            
+            .doctor-main-content {
+              margin-left: 220px;
+              padding: 1.5rem;
+            }
+            
+            .doctor-stats-grid {
+              grid-template-columns: repeat(2, 1fr);
+              gap: 1rem;
+            }
+            
+            .doctor-content-grid {
+              grid-template-columns: 1fr;
+              gap: 1.5rem;
+            }
+            
+            .doctor-table {
+              font-size: 0.875rem;
+            }
+            
+            .doctor-card {
+              padding: 1rem;
+            }
+          }
+          
+          /* MOBILE (0px - 767px) */
+          @media screen and (max-width: 767px) {
+            .doctor-top-nav {
+              padding: 0.75rem 1rem !important;
+            }
+            
+            .doctor-sidebar {
+              width: 280px !important;
+              transform: translateX(-100%) !important;
+              box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1) !important;
+            }
+            
+            .doctor-sidebar.open {
+              transform: translateX(0) !important;
+            }
+            
+            .doctor-main-content {
+              margin-left: 0 !important;
+              padding: 1rem !important;
+              width: 100% !important;
+            }
+            
+            .doctor-title {
+              font-size: 1.25rem !important;
+              font-weight: 600 !important;
+            }
+            
+            .doctor-stats-grid {
+              grid-template-columns: 1fr !important;
+              gap: 1rem !important;
+              margin-bottom: 1.5rem !important;
+            }
+            
+            .doctor-content-grid {
+              grid-template-columns: 1fr !important;
+              gap: 1rem !important;
+            }
+            
+            .doctor-card {
+              padding: 1rem !important;
+              border-radius: 0.5rem !important;
+            }
+            
+            .doctor-table {
+              font-size: 0.75rem !important;
+              overflow-x: auto !important;
+            }
+            
+            .doctor-table th,
+            .doctor-table td {
+              padding: 0.5rem 0.25rem !important;
+              white-space: nowrap !important;
+            }
+            
+            .notification-panel {
+              width: 100% !important;
+              max-width: 100% !important;
+              right: 0 !important;
+              left: 0 !important;
+              border-radius: 0 !important;
+              height: 100vh !important;
+              max-height: 100vh !important;
+            }
+            
+            .hamburger-menu {
+              display: block !important;
+            }
+            
+            .mobile-overlay {
+              position: fixed !important;
+              top: 0 !important;
+              left: 0 !important;
+              right: 0 !important;
+              bottom: 0 !important;
+              background: rgba(0, 0, 0, 0.5) !important;
+              z-index: 997 !important;
+              display: block !important;
+            }
+          }
+          
+          /* SMALL MOBILE (320px - 480px) */
+          @media screen and (max-width: 480px) {
+            .doctor-top-nav {
+              padding: 0.5rem 0.75rem !important;
+            }
+            
+            .doctor-main-content {
+              padding: 0.75rem !important;
+            }
+            
+            .doctor-title {
+              font-size: 1.125rem !important;
+            }
+            
+            .doctor-card {
+              padding: 0.75rem !important;
+            }
+            
+            .doctor-table {
+              font-size: 0.7rem !important;
+            }
+            
+            .doctor-sidebar {
+              width: 260px !important;
+            }
+          }
         `}
       </style>
       {/* Top Navigation Bar with Hamburger Menu */}
-      <div style={{
+      <div className="doctor-top-nav" style={{
         backgroundColor: 'white',
         borderBottom: '1px solid #e5e7eb',
         padding: '1rem 2rem',
