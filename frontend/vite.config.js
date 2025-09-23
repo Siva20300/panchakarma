@@ -2,16 +2,18 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
 export default defineConfig({
-  plugins: [react({
-    // This ensures proper JSX transformation
-    babel: {
-      plugins: [
-        ['@babel/plugin-transform-react-jsx', { runtime: 'automatic' }]
-      ]
-    }
-  })],
+  plugins: [react()],
+  resolve: {
+    dedupe: ['react', 'react-dom']
+  },
+  optimizeDeps: {
+    include: ['recharts']
+  },
   server: {
     port: 5173,
-    host: true
+    host: true,
+    hmr: {
+      overlay: false
+    }
   }
 })

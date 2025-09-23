@@ -22,6 +22,29 @@ const TherapistDashboard = () => {
   // UI state for filters/search
   const [statusFilter, setStatusFilter] = useState('all'); // all|ongoing|completed|pending
   const [searchQuery, setSearchQuery] = useState('');
+  const [appointmentModal, setAppointmentModal] = useState({ open: false, appt: null });
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().slice(0,10));
+  const weekInfo = useMemo(() => {
+    const base = new Date(selectedDate);
+    const mondayOffset = (base.getDay() + 6) % 7; // Monday as 0
+    const monday = new Date(base);
+    monday.setDate(base.getDate() - mondayOffset);
+    const days = Array.from({ length: 7 }, (_, i) => {
+      const d = new Date(monday);
+      d.setDate(monday.getDate() + i);
+      const iso = d.toISOString().slice(0, 10);
+      const count = dummyBookings.filter(
+        (b) => (b.therapistName === therapistName || !b.therapistName) && b.date === iso
+      ).length;
+      return {
+        dateObj: d,
+        iso,
+        label: d.toLocaleDateString(undefined, { weekday: 'short' }),
+        count,
+      };
+    });
+    return days; // Monday..Sunday
+  }, [selectedDate, therapistName]);
 
   const handleViewProfile = (patient) => {
     setProfileModal({ open: true, patient });
@@ -92,21 +115,7 @@ const TherapistDashboard = () => {
           />
         </div>
 
-        {/* Hero / Quick Actions Card */}
-        <div className="card" style={{ marginBottom: '1.25rem', overflow: 'hidden', border: '1px solid var(--gray-200)', borderRadius: '0.75rem', boxShadow: '0 10px 20px rgba(0,0,0,0.06)', animation: 'fadeSlideIn 450ms ease both' }}>
-          <style>{`@keyframes fadeSlideIn {0%{opacity:0;transform:translateY(6px)}100%{opacity:1;transform:translateY(0)}}`}</style>
-          <div className="card-body" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem 1.25rem' }}>
-            <div>
-              <div style={{ fontWeight: 800, fontSize: '1.125rem', color: 'var(--gray-800)' }}>Welcome back, {therapistName}</div>
-              <div style={{ color: 'var(--gray-600)', marginTop: 4 }}>Review today’s schedule, new assignments, and session updates.</div>
-            </div>
-            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-              <button className="btn btn-primary">Today’s Schedule</button>
-              <button className="btn btn-secondary">New Assignment</button>
-              <button className="btn btn-outline">View Reports</button>
-            </div>
-          </div>
-        </div>
+        {/* Removed hero/quick actions section as requested */}
 
         {/* Stats Cards */}
         <div className="grid grid-cols-3 mb-6">
@@ -142,11 +151,14 @@ const TherapistDashboard = () => {
           </div>
         </div>
 
+        {/* View Reports quick button removed as requested */}
+
         {/* Tabs - pill styled */}
         <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1.25rem' }}>
           <TabButton id="assigned" label="Assigned Patients" active={activeTab === 'assigned'} onClick={setActiveTab} icon="👥" />
+          <TabButton id="newAssignments" label="New Assignments" active={activeTab === 'newAssignments'} onClick={setActiveTab} icon="🆕" />
           <TabButton id="sessions" label="Session Updates" active={activeTab === 'sessions'} onClick={setActiveTab} icon="🗓️" />
-          <TabButton id="reports" label="My Reports" active={activeTab === 'reports'} onClick={setActiveTab} icon="📄" />
+          <TabButton id="reports" label="Reports" active={activeTab === 'reports'} onClick={setActiveTab} icon="📄" />
           <TabButton id="feedback" label="Patient Feedback" active={activeTab === 'feedback'} onClick={setActiveTab} icon="⭐" />
           <TabButton id="schedule" label="Schedule" active={activeTab === 'schedule'} onClick={setActiveTab} icon="📅" />
         </div>
@@ -270,6 +282,50 @@ const TherapistDashboard = () => {
           </div>
         )}
 
+        {activeTab === 'newAssignments' && (
+          <div>
+            <div className="card" style={{ marginBottom: '1rem' }}>
+              <div className="card-header">
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>New Assignment Requests</h3>
+              </div>
+              <div className="card-body">
+                {assignmentCandidates.length === 0 ? (
+                  <div style={{ color: 'var(--gray-600)' }}>No new assignments at the moment.</div>
+                ) : (
+                  <div className="grid grid-cols-1 gap-4">
+                    {assignmentCandidates.map(candidate => (
+                      <div key={candidate.id} className="card">
+                        <div className="card-body">
+                          <div className="flex justify-between items-start">
+                            <div style={{ flex: 1 }}>
+                              <h4 style={{ fontSize: '1.125rem', fontWeight: 'bold', marginBottom: '0.25rem' }}>{candidate.name}</h4>
+                              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.75rem' }}>
+                                <div>
+                                  <span style={{ fontSize: '0.875rem', color: 'var(--gray-600)' }}>Problem:</span>
+                                  <span style={{ marginLeft: '0.5rem' }}>{candidate.problem}</span>
+                                </div>
+                                <div>
+                                  <span style={{ fontSize: '0.875rem', color: 'var(--gray-600)' }}>Therapy:</span>
+                                  <span style={{ marginLeft: '0.5rem', fontWeight: 500 }}>{candidate.therapyType}</span>
+                                </div>
+                              </div>
+                            </div>
+                            <div style={{ marginLeft: '2rem', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                              <button className="btn btn-outline" onClick={() => handleViewProfile(candidate)}>View Profile</button>
+                              <button className="btn btn-primary" onClick={() => handleAcceptPatient(candidate)}>Accept</button>
+                              <button className="btn btn-secondary" onClick={() => handleRejectPatient(candidate)}>Reject</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
         {activeTab === 'sessions' && (
           <div className="card">
             <div className="card-header">
@@ -314,28 +370,68 @@ const TherapistDashboard = () => {
               <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>Weekly Schedule</h3>
             </div>
             <div className="card-body">
+              {/* Date selector to view appointments for any day */}
+              <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '0.75rem' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <span style={{ fontWeight: 600, color: 'var(--gray-700)' }}>Select Date:</span>
+                  <input
+                    type="date"
+                    value={selectedDate}
+                    onChange={(e) => setSelectedDate(e.target.value)}
+                    style={{ border: '1px solid var(--gray-300)', borderRadius: 8, padding: '0.35rem 0.5rem' }}
+                  />
+                </label>
+              </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '0.5rem', marginBottom: '1rem' }}>
-                {['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d => (
-                  <div key={d} style={{ border: '1px solid var(--gray-200)', borderRadius: '0.5rem', padding: '0.5rem', textAlign: 'center' }}>
-                    <div style={{ fontWeight: 700 }}>{d}</div>
-                    <div style={{ color: 'var(--gray-600)', fontSize: '0.75rem' }}>Appts: {Math.floor(Math.random()*3)}</div>
-                  </div>
-                ))}
+                {weekInfo.map((d) => {
+                  const isSelected = d.iso === selectedDate;
+                  return (
+                    <button
+                      key={d.iso}
+                      onClick={() => setSelectedDate(d.iso)}
+                      style={{
+                        border: `1px solid ${isSelected ? 'var(--primary-600)' : 'var(--gray-200)'}`,
+                        borderRadius: '0.5rem',
+                        padding: '0.5rem',
+                        textAlign: 'center',
+                        cursor: 'pointer',
+                        background: isSelected ? 'var(--primary-50)' : 'white',
+                        color: isSelected ? 'var(--primary-700)' : 'inherit',
+                      }}
+                    >
+                      <div style={{ fontWeight: 700 }}>{d.label}</div>
+                      <div style={{ color: 'var(--gray-600)', fontSize: '0.75rem' }}>Appts: {d.count}</div>
+                      <div style={{ color: 'var(--gray-500)', fontSize: '0.75rem' }}>{new Date(d.iso).getDate()}</div>
+                    </button>
+                  );
+                })}
               </div>
               <div>
-                <div style={{ fontWeight: 800, marginBottom: '0.5rem' }}>Today</div>
+                <div style={{ fontWeight: 800, marginBottom: '0.5rem' }}>Appointments for {new Date(selectedDate).toLocaleDateString()}</div>
                 <div className="grid grid-cols-1 gap-2">
-                  {dummyBookings.filter(b => b.therapistName===therapistName || !b.therapistName).map(b => (
+                  {dummyBookings
+                    .filter(b => (b.therapistName===therapistName || !b.therapistName) && b.date === selectedDate)
+                    .map(b => (
                     <div key={b.id} className="card" style={{ border: '1px solid var(--gray-200)' }}>
-                      <div className="card-body" style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <div className="card-body" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem' }}>
                         <div>
                           <div style={{ fontWeight: 700 }}>{b.patientName}</div>
                           <div style={{ color: 'var(--gray-600)', fontSize: '0.875rem' }}>{b.therapyType}</div>
                         </div>
-                        <div style={{ color: 'var(--gray-700)' }}>{b.time}</div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                          <div style={{ color: 'var(--gray-700)' }}>{b.time}</div>
+                          <button className="btn btn-outline" onClick={() => setAppointmentModal({ open: true, appt: b })}>View Updates</button>
+                        </div>
                       </div>
                     </div>
                   ))}
+                  {dummyBookings.filter(b => (b.therapistName===therapistName || !b.therapistName) && b.date === selectedDate).length === 0 && (
+                    <div className="card" style={{ border: '1px dashed var(--gray-300)' }}>
+                      <div className="card-body" style={{ color: 'var(--gray-600)' }}>
+                        No appointments for the selected date.
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -685,6 +781,37 @@ const TherapistDashboard = () => {
           doctor={assigningDoctor}
           onClose={handleCloseProfile}
         />
+      )}
+
+      {/* Appointment Updates Modal */}
+      {appointmentModal.open && appointmentModal.appt && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
+        }}>
+          <div style={{ backgroundColor: 'white', borderRadius: '0.75rem', width: '90%', maxWidth: 560, padding: '1.25rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+              <h3 style={{ margin: 0, fontWeight: 800 }}>Appointment Updates</h3>
+              <button
+                onClick={() => setAppointmentModal({ open: false, appt: null })}
+                style={{ background: 'none', border: '1px solid var(--gray-300)', borderRadius: 8, padding: '0.25rem 0.5rem', cursor: 'pointer' }}
+              >Close</button>
+            </div>
+            <div style={{ marginBottom: '0.75rem' }}>
+              <div style={{ fontWeight: 700 }}>{appointmentModal.appt.patientName}</div>
+              <div style={{ color: 'var(--gray-600)' }}>{appointmentModal.appt.therapyType}</div>
+              <div style={{ color: 'var(--gray-800)', marginTop: 4 }}>Time: {appointmentModal.appt.time}</div>
+            </div>
+            <div>
+              <div style={{ fontWeight: 700, marginBottom: 6 }}>Recent Updates</div>
+              <ul style={{ margin: 0, paddingLeft: '1.25rem' }}>
+                <li>Appointment booked • {new Date().toLocaleDateString()} {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</li>
+                <li>Reminder sent • {new Date().toLocaleDateString()} 09:00 AM</li>
+                <li>Confirmed by patient • {new Date().toLocaleDateString()} 09:30 AM</li>
+              </ul>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
