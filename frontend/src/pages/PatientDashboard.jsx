@@ -222,11 +222,214 @@ const PatientDashboard = () => {
 
   return (
     <div style={{ padding: "2rem 0" }}>
+      <style>
+        {`
+          /* ===== PATIENT DASHBOARD RESPONSIVE STYLES ===== */
+          
+          /* DESKTOP (Default) */
+          .patient-dashboard-container {
+            padding: 2rem 0;
+          }
+          
+          .patient-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+          }
+          
+          .patient-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: var(--primary-700);
+          }
+          
+          .patient-subtitle {
+            color: var(--gray-600);
+            font-size: 1.125rem;
+            font-weight: 500;
+          }
+          
+          .dashboard-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+          }
+          
+          .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-bottom: 2rem;
+          }
+          
+          .dashboard-card {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+          }
+          
+          /* TABLET (768px - 1024px) */
+          @media screen and (min-width: 768px) and (max-width: 1024px) {
+            .patient-dashboard-container {
+              padding: 1.5rem 0;
+            }
+            
+            .patient-header {
+              flex-direction: column;
+              align-items: flex-start;
+              gap: 1rem;
+            }
+            
+            .patient-title {
+              font-size: 2rem;
+            }
+            
+            .patient-subtitle {
+              font-size: 1rem;
+            }
+            
+            .dashboard-grid {
+              grid-template-columns: repeat(2, 1fr);
+              gap: 1.5rem;
+            }
+            
+            .dashboard-tabs {
+              justify-content: center;
+              gap: 0.25rem;
+            }
+            
+            .tab-button-responsive {
+              padding: 0.75rem 1rem !important;
+              font-size: 0.875rem !important;
+            }
+          }
+          
+          /* MOBILE (0px - 767px) */
+          @media screen and (max-width: 767px) {
+            .patient-dashboard-container {
+              padding: 1rem 0 !important;
+            }
+            
+            .container {
+              padding: 0 1rem !important;
+            }
+            
+            .patient-header {
+              flex-direction: column !important;
+              align-items: center !important;
+              text-align: center !important;
+              gap: 1rem !important;
+              margin-bottom: 1.5rem !important;
+            }
+            
+            .patient-title {
+              font-size: 1.75rem !important;
+              line-height: 1.2 !important;
+            }
+            
+            .patient-subtitle {
+              font-size: 0.9rem !important;
+              text-align: center !important;
+            }
+            
+            .dashboard-tabs {
+              flex-direction: column !important;
+              gap: 0.5rem !important;
+              margin-bottom: 1.5rem !important;
+            }
+            
+            .tab-button-responsive {
+              width: 100% !important;
+              padding: 1rem !important;
+              font-size: 1rem !important;
+              text-align: center !important;
+            }
+            
+            .dashboard-grid {
+              grid-template-columns: 1fr !important;
+              gap: 1rem !important;
+              margin-bottom: 1.5rem !important;
+            }
+            
+            .dashboard-card {
+              padding: 1rem !important;
+              border-radius: 0.5rem !important;
+            }
+            
+            .chart-container {
+              height: 250px !important;
+            }
+            
+            .form-grid {
+              grid-template-columns: 1fr !important;
+              gap: 1rem !important;
+            }
+            
+            .form-input {
+              padding: 1rem !important;
+              font-size: 1rem !important;
+            }
+            
+            .form-button {
+              width: 100% !important;
+              padding: 1rem !important;
+              font-size: 1rem !important;
+              margin-bottom: 0.5rem !important;
+            }
+            
+            .stats-grid {
+              grid-template-columns: 1fr !important;
+              gap: 1rem !important;
+            }
+            
+            .progress-card {
+              padding: 1rem !important;
+            }
+          }
+          
+          /* SMALL MOBILE (320px - 480px) */
+          @media screen and (max-width: 480px) {
+            .patient-dashboard-container {
+              padding: 0.5rem 0 !important;
+            }
+            
+            .container {
+              padding: 0 0.75rem !important;
+            }
+            
+            .patient-title {
+              font-size: 1.5rem !important;
+            }
+            
+            .patient-subtitle {
+              font-size: 0.85rem !important;
+            }
+            
+            .dashboard-card {
+              padding: 0.75rem !important;
+            }
+            
+            .chart-container {
+              height: 200px !important;
+            }
+            
+            .tab-button-responsive {
+              padding: 0.875rem !important;
+            }
+          }
+        `}
+      </style>
+      
       <div className="container">
         {/* Header */}
-        <div className="mb-6" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div className="patient-header mb-6" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
             <h1
+              className="patient-title"
               style={{
                 fontSize: "2.5rem",
                 fontWeight: "bold",
@@ -236,7 +439,7 @@ const PatientDashboard = () => {
             >
               Welcome back, {patientData?.name || 'Patient'}!
             </h1>
-            <p style={{ 
+            <p className="patient-subtitle" style={{ 
               color: "var(--gray-600)", 
               fontSize: "1.125rem",
               fontWeight: "500"
@@ -248,7 +451,7 @@ const PatientDashboard = () => {
         </div>
 
         {/* Quick Stats */}
-        <div className="grid grid-cols-3 mb-6">
+        <div className="dashboard-grid stats-grid grid grid-cols-3 mb-6">
           <div className="card">
             <div className="card-body text-center">
               <div
@@ -305,6 +508,7 @@ const PatientDashboard = () => {
 
         {/* Tabs */}
         <div
+          className="dashboard-tabs tabs-container-responsive"
           style={{
             backgroundColor: "var(--gray-50)",
             padding: "1rem",
@@ -320,7 +524,6 @@ const PatientDashboard = () => {
             boxShadow: "0 4px 12px rgba(0, 0, 0, 0.08)",
             background: "linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%)",
           }}
-          className="tabs-container-responsive"
         >
           <TabButton
             id="profile"

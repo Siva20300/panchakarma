@@ -8,14 +8,26 @@ const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: ['http://localhost:5173', 'http://localhost:5174', 'http://127.0.0.1:50791'],
   credentials: true
 }));
 app.use(express.json());
 
 // In-memory user storage (for testing)
-const users = [];
-let userIdCounter = 1;
+const users = [
+  {
+    _id: 1,
+    name: 'Test User',
+    email: 'test@test.com',
+    password: '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password: password
+    role: 'patient',
+    phone: '1234567890',
+    age: 30,
+    isActive: true,
+    createdAt: new Date()
+  }
+];
+let userIdCounter = 2;
 
 // Helper function to generate simple JWT-like token
 const generateToken = (userId) => {
@@ -91,6 +103,8 @@ app.post('/api/auth/login', async (req, res) => {
     const { email, password } = req.body;
     
     console.log('Login attempt:', email);
+    console.log('Request body:', req.body);
+    console.log('Current users:', users.length);
     
     // Find user
     const user = users.find(u => u.email === email);

@@ -106,7 +106,148 @@ const Register = () => {
       bottom: 0,
       overflow: 'auto'
     }}>
-      <div style={{ 
+      <style>
+        {`
+          /* ===== REGISTER PAGE RESPONSIVE STYLES ===== */
+          
+          /* DESKTOP (Default) */
+          .register-container {
+            padding: 2rem;
+            min-height: 100vh;
+          }
+          
+          .register-card {
+            width: 100%;
+            max-width: 700px;
+            height: 90vh;
+            background-color: white;
+            border-radius: 1rem;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+          }
+          
+          .register-form-container {
+            padding: 2rem;
+            overflow-y: auto;
+          }
+          
+          /* TABLET (768px - 1024px) */
+          @media screen and (min-width: 768px) and (max-width: 1024px) {
+            .register-container {
+              padding: 1.5rem;
+            }
+            
+            .register-card {
+              max-width: 600px;
+              height: 95vh;
+            }
+            
+            .register-form-container {
+              padding: 1.5rem;
+            }
+            
+            .register-form-grid {
+              grid-template-columns: 1fr !important;
+              gap: 1rem !important;
+            }
+          }
+          
+          /* MOBILE (0px - 767px) */
+          @media screen and (max-width: 767px) {
+            .register-container {
+              padding: 1rem !important;
+              align-items: flex-start !important;
+              padding-top: 2rem !important;
+            }
+            
+            .register-card {
+              max-width: 100% !important;
+              width: 100% !important;
+              height: auto !important;
+              min-height: calc(100vh - 4rem) !important;
+              border-radius: 0.75rem !important;
+              margin: 0 !important;
+            }
+            
+            .register-form-container {
+              padding: 1.5rem !important;
+              overflow-y: visible !important;
+            }
+            
+            .register-header {
+              text-align: center !important;
+              margin-bottom: 1.5rem !important;
+            }
+            
+            .register-title {
+              font-size: 1.75rem !important;
+            }
+            
+            .register-subtitle {
+              font-size: 0.9rem !important;
+            }
+            
+            .register-form-grid {
+              grid-template-columns: 1fr !important;
+              gap: 1rem !important;
+            }
+            
+            .register-input {
+              padding: 1rem !important;
+              font-size: 1rem !important;
+              margin-bottom: 0.5rem !important;
+            }
+            
+            .register-select {
+              padding: 1rem !important;
+              font-size: 1rem !important;
+            }
+            
+            .register-button {
+              padding: 1rem !important;
+              font-size: 1rem !important;
+              margin-top: 1rem !important;
+            }
+            
+            .register-links {
+              text-align: center !important;
+              font-size: 0.9rem !important;
+              margin-top: 1rem !important;
+            }
+          }
+          
+          /* SMALL MOBILE (320px - 480px) */
+          @media screen and (max-width: 480px) {
+            .register-container {
+              padding: 0.5rem !important;
+              padding-top: 1rem !important;
+            }
+            
+            .register-card {
+              border-radius: 0.5rem !important;
+              min-height: calc(100vh - 2rem) !important;
+            }
+            
+            .register-form-container {
+              padding: 1rem !important;
+            }
+            
+            .register-title {
+              font-size: 1.5rem !important;
+            }
+            
+            .register-input,
+            .register-select,
+            .register-button {
+              padding: 0.875rem !important;
+            }
+          }
+        `}
+      </style>
+      
+      <div className="register-card" style={{ 
         width: '100%', 
         maxWidth: '700px',
         height: '90vh',
@@ -118,7 +259,7 @@ const Register = () => {
         overflow: 'hidden'
       }}>
         {/* Fixed Header */}
-        <div style={{
+        <div className="register-header" style={{
           padding: '2rem 2.5rem 1.5rem',
           borderBottom: '1px solid var(--gray-200)',
           backgroundColor: 'white',
@@ -158,16 +299,16 @@ const Register = () => {
           }}>
             🧘‍♀️
           </div>
-          <h2 style={{ fontSize: '2.25rem', fontWeight: 'bold', marginBottom: '0.5rem', margin: 0 }}>
+          <h2 className="register-title" style={{ fontSize: '2.25rem', fontWeight: 'bold', marginBottom: '0.5rem', margin: 0 }}>
             Join AyurSutra
           </h2>
-          <p style={{ color: 'var(--gray-600)', fontSize: '1.125rem', margin: 0 }}>
+          <p className="register-subtitle" style={{ color: 'var(--gray-600)', fontSize: '1.125rem', margin: 0 }}>
             Create your account to get started
           </p>
         </div>
         
         {/* Scrollable Content */}
-        <div style={{
+        <div className="register-form-container" style={{
           flex: 1,
           overflowY: 'auto',
           padding: '2rem 2.5rem',
